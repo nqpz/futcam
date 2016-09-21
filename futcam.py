@@ -46,6 +46,12 @@ class FutCam:
         # Setup the transforms.
         trans = futcam_transforms.futcam_transforms()
 
+        scale_methods = [
+            trans.scale_to_thoughtful,
+            trans.scale_to_simple
+        ]
+        scale_index = 0
+
         distortion = 1.3
         while True:
             # Read frame.
@@ -58,7 +64,7 @@ class FutCam:
 
             if self.scale_to is not None:
                 w, h = self.scale_to
-                frame = trans.scale_to(frame, w, h)
+                frame = scale_methods[scale_index](frame, w, h)
 
             # Call Futhark function.
             #frame = trans.invert_rgb(frame)
@@ -78,10 +84,14 @@ class FutCam:
                 if event.type == pygame.QUIT:
                     return 0
                 elif event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_q:
+                        return 0
                     if event.key == pygame.K_DOWN:
                         distortion -= 0.05
                     if event.key == pygame.K_UP:
                         distortion += 0.05
+                    if event.key == pygame.K_s:
+                        scale_index = (scale_index + 1) % len(scale_methods)
 
 
 def main(args):

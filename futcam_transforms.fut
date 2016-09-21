@@ -1,22 +1,5 @@
-type pixel = [3]u8 -- Well, it works.
-
-entry scale_to(frame : [h0][w0]pixel, w1 : i32, h1 : i32) : [h1][w1]pixel =
-  let y_factor = (f64 h1) / (f64 h0)
-  let x_factor = (f64 w1) / (f64 w0)
-  in map (fn (y1 : i32) : [w1]pixel =>
-            map (fn (x1 : i32) : pixel =>
-                   let y1_norm = f64 (y1 - h1 / 2)
-                   let y0_norm = y1_norm / y_factor
-                   let y0 = (i32 y0_norm) + h0 / 2
-                   
-                   let x1_norm = f64 (x1 - w1 / 2)
-                   let x0_norm = x1_norm / x_factor
-                   let x0 = (i32 x0_norm) + w0 / 2
-                   
-                   let pixel = unsafe frame[y0][x0]
-                   in pixel)
-         (iota w1))
-  (iota h1)
+include futcam_base
+include futcam_scale
 
 entry invert_rgb(frame : [h][w]pixel) : [h][w]pixel =
   map (fn (row : [w]pixel) : [w]pixel =>
