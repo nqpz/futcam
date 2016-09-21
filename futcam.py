@@ -12,8 +12,9 @@ import futcam_transforms
 
 
 class FutCam:
-    def __init__(self, resolution=None):
+    def __init__(self, resolution=None, scale_to=None):
         self.resolution = resolution
+        self.scale_to = scale_to
 
     def run(self):
         # Open a camera device for capturing.
@@ -24,17 +25,21 @@ class FutCam:
             return 1
 
         if self.resolution is not None:
-            width, height = map(int, self.resolution.split('x'))
-            cam.set(cv.CV_CAP_PROP_FRAME_WIDTH, width)
-            cam.set(cv.CV_CAP_PROP_FRAME_HEIGHT, height)
+            w, h = self.resolution
+            cam.set(cv.CV_CAP_PROP_FRAME_WIDTH, w)
+            cam.set(cv.CV_CAP_PROP_FRAME_HEIGHT, h)
 
-        width = int(cam.get(cv.CV_CAP_PROP_FRAME_WIDTH))
-        height = int(cam.get(cv.CV_CAP_PROP_FRAME_HEIGHT))
+        if self.scale_to is not None:
+            width, height = self.scale_to
+        else:
+            width = int(cam.get(cv.CV_CAP_PROP_FRAME_WIDTH))
+            height = int(cam.get(cv.CV_CAP_PROP_FRAME_HEIGHT))
+
+        size = (width, height)
 
         # Setup pygame.
         pygame.init()
         pygame.display.set_caption('futcam')
-        size = (width, height)
         screen = pygame.display.set_mode(size)
         surface = pygame.Surface(size)
 
@@ -50,6 +55,10 @@ class FutCam:
 
             # Mess with the internal representation.
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
+            if self.scale_to is not None:
+                w, h = self.scale_to
+                frame = trans.scale_to(frame, w, h)
 
             # Call Futhark function.
             #frame = trans.invert_rgb(frame)
@@ -76,12 +85,17 @@ class FutCam:
 
 
 def main(args):
+    def size(s):
+        return tuple(map(int, s.split('x')))
+    
     arg_parser = argparse.ArgumentParser()
-    arg_parser.add_argument('--resolution', type=str, metavar='WIDTHxHEIGHT',
+    arg_parser.add_argument('--resolution', type=size, metavar='WIDTHxHEIGHT',
                             help='set the resolution of the webcam instead of relying on its default resolution')
+    arg_parser.add_argument('--scale-to', type=size, metavar='WIDTHxHEIGHT',
+                            help='scale the camera output to this size before sending it to a filter')
     args = arg_parser.parse_args(args)
 
-    cam = FutCam(resolution=args.resolution)
+    cam = FutCam(resolution=args.resolution, scale_to=args.scale_to)
     return cam.run()
 
 if __name__ == '__main__':
