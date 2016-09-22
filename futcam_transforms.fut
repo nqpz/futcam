@@ -29,7 +29,7 @@ entry dim_sides(frame : [h][w]pixel) : [h][w]pixel =
          (zip row (iota w)))
   (zip frame (iota h))
 
-entry distort(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
+entry fisheye(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
   map (fn (y : i32) : [w]pixel =>
          map (fn (x : i32) : pixel =>
                 let y_scale = ((f32 (h / 2)) ** distortion) / (f32 (h / 2))
@@ -51,3 +51,17 @@ entry distort(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
                 in pixel)
          (iota w))
   (iota h)
+
+fun intensity (c: pixel): int = int c[0] + int c[1] + int c[2]
+
+fun min (x: int) (y: int): int = if x < y then x else y
+
+fun selectColour (colours: [n]pixel) (x: int): pixel =
+  let range = 256 / n
+  in unsafe colours[min (x/range) (n-1)]
+
+entry warhol(frame : [h][w]pixel, _distortion : f32) : [h][w]pixel =
+  let colours = [[0u8,0u8,255u8], [255u8,0u8,255u8], [255u8,165u8,0u8], [255u8,255u8,0u8]]
+  in map (fn row : [w]pixel =>
+            map (selectColour colours) (map intensity row))
+          frame
