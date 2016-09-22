@@ -41,7 +41,6 @@ class FutCam:
         pygame.init()
         pygame.display.set_caption('futcam')
         screen = pygame.display.set_mode(size)
-        surface = pygame.Surface(size)
 
         # Setup the transforms.
         trans = futcam_transforms.futcam_transforms()
@@ -76,8 +75,7 @@ class FutCam:
             frame = numpy.rot90(frame)
 
             # Show frame.
-            pygame.surfarray.blit_array(surface, frame)
-            screen.blit(surface, (0, 0))
+            pygame.surfarray.blit_array(screen, frame)
             pygame.display.flip()
 
             for event in pygame.event.get():
