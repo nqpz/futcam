@@ -51,6 +51,15 @@ class FutCam:
         ]
         scale_index = 0
 
+        distort_methods = [
+            trans.fisheye,
+            trans.warhol,
+            trans.quad,
+            trans.whirl,
+            trans.prefixMax,
+        ]
+        distort_index = 0
+
         distortion = 1.3
         while True:
             # Read frame.
@@ -68,7 +77,7 @@ class FutCam:
             # Call Futhark function.
             #frame = trans.invert_rgb(frame)
             #frame = trans.dim_sides(frame)
-            frame = trans.distort(frame, distortion)
+            frame = distort_methods[distort_index](frame, distortion)
             frame = frame.get()
 
             # Mess with the internal representation.
@@ -90,6 +99,8 @@ class FutCam:
                         distortion += 0.05
                     if event.key == pygame.K_s:
                         scale_index = (scale_index + 1) % len(scale_methods)
+                    if event.key == pygame.K_d:
+                        distort_index = (distort_index + 1) % len(distort_methods)
 
 
 def main(args):
