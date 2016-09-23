@@ -54,7 +54,7 @@ entry fisheye(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
          (iota w))
   (iota h)
 
-fun intensity (c: pixel): int = int c[0] + int c[1] + int c[2]
+fun intensity (c: pixel): int = (int c[0] * 2 + int c[1] * 3 + int c[2]) / 6
 
 fun min (x: int) (y: int): int = if x < y then x else y
 
@@ -119,3 +119,25 @@ entry prefixMax(frame : [h][w]pixel, _distortion : f32) : [h][w]pixel =
          let bs = row[0:w,2]
          in transpose ([(scan max8 0u8 rs), (scan max8 0u8 gs), (scan max8 0u8 bs)]))
    frame
+
+fun desaturate (p: pixel): pixel =
+  let v = u8 (intensity p)
+  in [v,v,v]
+
+fun rotation ((x,y): (int,int)): f32 =
+  let r = sqrt32 (f32 (x*x + y*y))
+  let x' = f32 x / r
+  let y' = f32 y / r
+  let c = asin32 x'
+  let s = acos32 y'
+  in c + s
+
+entry greyscale(frame: [h][w]pixel, distortion: f32): [h][w]pixel =
+  zipWith (fn x: [w]pixel =>
+             map (fn y =>
+                    let p = frame[x,y]
+                    in if rotation (x,y) < distortion
+                       then desaturate p
+                       else p)
+           (iota w))
+   (iota h)

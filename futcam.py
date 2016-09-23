@@ -53,6 +53,7 @@ class FutCam:
 
         distort_methods = [
             trans.fisheye,
+            trans.greyscale,
             trans.warhol,
             trans.quad,
             trans.whirl,
