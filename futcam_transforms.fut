@@ -32,6 +32,7 @@ entry dim_sides(frame : [h][w]pixel) : [h][w]pixel =
   (zip frame (iota h))
 
 entry fisheye(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
+  let distortion = distortion + 1.3 in
   map (fn (y : i32) : [w]pixel =>
          map (fn (x : i32) : pixel =>
                 let y_scale = ((f32 (h / 2)) ** distortion) / (f32 (h / 2))
@@ -63,7 +64,7 @@ fun selectColour (colours: [n]pixel) (x: int): pixel =
   in unsafe colours[min (x/range) (n-1)]
 
 entry warhol(frame : [h][w]pixel, _distortion : f32) : [h][w]pixel =
-  let frame' = quad (frame, 1.3)
+  let frame' = quad (frame, 0.0)
   let (urows,lrows) = split (h/2) frame'
   let (ul,ur) = split@1 (w/2) urows
   let (ll,lr) = split@1 (w/2) lrows
@@ -84,7 +85,7 @@ fun warholColourise(colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
       frame
 
 entry quad(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
-  let n = 2 + int((distortion-1.3) / 0.05) -- Niels, make a discrete interface.
+  let n = 2 + int(distortion / 0.05) -- Niels, make a discrete interface.
   in map (fn y: [w]pixel => map (fn x : pixel => unsafe frame[y%(h/n)*n,x%(w/n)*n]) (iota w))
          (iota h)
 
@@ -128,15 +129,13 @@ fun rotation ((x,y): (int,int)): f32 =
   let r = sqrt32 (f32 (x*x + y*y))
   let x' = f32 x / r
   let y' = f32 y / r
-  let c = asin32 x'
-  let s = acos32 y'
-  in c + s
+  in atan2_32 y' x'
 
 entry greyscale(frame: [h][w]pixel, distortion: f32): [h][w]pixel =
   zipWith (fn x: [w]pixel =>
              map (fn y =>
                     let p = frame[x,y]
-                    in if rotation (x,y) < distortion
+                    in if rotation (x-h/2, y-w/2) < distortion
                        then desaturate p
                        else p)
            (iota w))
