@@ -61,7 +61,7 @@ class FutCam:
         ]
         distort_index = 0
 
-        distortion = 1.3
+        distortion = 0
         while True:
             # Read frame.
             retval, frame = cam.read()
