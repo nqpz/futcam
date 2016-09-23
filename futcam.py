@@ -16,6 +16,10 @@ class FutCam:
         self.resolution = resolution
         self.scale_to = scale_to
 
+    def message(self, what, where):
+        text = self.font.render(what, 1, (255, 255, 255))
+        self.screen.blit(text, where)
+
     def run(self):
         # Open a camera device for capturing.
         cam = cv2.VideoCapture(0)
@@ -40,7 +44,8 @@ class FutCam:
         # Setup pygame.
         pygame.init()
         pygame.display.set_caption('futcam')
-        screen = pygame.display.set_mode(size)
+        self.screen = screen = pygame.display.set_mode(size)
+        self.font = pygame.font.Font(None, 36)
 
         # Setup the transforms.
         trans = futcam_transforms.futcam_transforms()
@@ -51,17 +56,18 @@ class FutCam:
         ]
         scale_index = 0
 
-        distort_methods = [
-            trans.fisheye,
-            trans.greyscale,
-            trans.warhol,
-            trans.quad,
-            trans.whirl,
-            trans.prefixMax,
-        ]
-        distort_index = 0
-
         distortion = 0
+        distort_methods = {
+            'fisheye': trans.fisheye,
+            'greyscale': trans.greyscale,
+            'warhol': trans.warhol,
+            'quad': trans.quad,
+            'whirl': trans.whirl,
+            'a mystery': trans.prefixMax,
+        }
+        distorts = []
+        distort_names = distort_methods.keys()
+        distort_index = 0
         while True:
             # Read frame.
             retval, frame = cam.read()
@@ -76,16 +82,21 @@ class FutCam:
                 frame = scale_methods[scale_index](frame, w, h)
 
             # Call Futhark function.
-            #frame = trans.invert_rgb(frame)
-            #frame = trans.dim_sides(frame)
-            frame = distort_methods[distort_index](frame, distortion)
-            frame = frame.get()
+            for d in distorts:
+                frame = distort_methods[d](frame, distortion)
+            if not type(frame) is numpy.ndarray:
+                frame = frame.get()
 
             # Mess with the internal representation.
             frame = numpy.rot90(frame)
 
             # Show frame.
             pygame.surfarray.blit_array(screen, frame)
+
+            for (i,d) in zip(range(len(distorts)), distorts):
+                self.message(d, (0,30*i))
+            self.message(distort_names[distort_index] + '?', (0,30*len(distorts)))
+
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -102,7 +113,10 @@ class FutCam:
                         scale_index = (scale_index + 1) % len(scale_methods)
                     if event.key == pygame.K_d:
                         distort_index = (distort_index + 1) % len(distort_methods)
-
+                    if event.key == pygame.K_RETURN:
+                        distorts += [distort_names[distort_index]]
+                    if event.key == pygame.K_BACKSPACE:
+                        distorts = distorts[:-1]
 
 def main(args):
     def size(s):

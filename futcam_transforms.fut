@@ -135,7 +135,7 @@ entry greyscale(frame: [h][w]pixel, distortion: f32): [h][w]pixel =
   zipWith (fn x: [w]pixel =>
              map (fn y =>
                     let p = frame[x,y]
-                    in if rotation (x-h/2, y-w/2) < distortion
+                    in if rotation (x-h/2, y-w/2) < distortion+3.147
                        then desaturate p
                        else p)
            (iota w))
