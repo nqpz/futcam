@@ -98,7 +98,10 @@ class FutCam:
         user_value = 0
         user_value_status = 0
         user_values = []
+        user_value_change_speed = 13
         while True:
+            fps = self.clock.get_fps()
+
             # Read frame.
             retval, frame = self.cam.read()
             if not retval:
@@ -131,7 +134,7 @@ class FutCam:
                     self.message(f, (5, 5 + 30 * i))
                 self.message(filter_names[filter_index] + '?',
                              (5, 5 + 30 * len(applied_filters)))
-                self.message('FPS: {:.02f}'.format(self.clock.get_fps()),
+                self.message('FPS: {:.02f}'.format(fps),
                              (self.width - 125, 5))
     
             # Show on screen.
@@ -177,7 +180,7 @@ class FutCam:
                         user_value_status = 0
 
             if user_value_status != 0:
-                user_value += user_value_status
+                user_value += user_value_status * (user_value_change_speed / fps)
 
             self.clock.tick()
 
