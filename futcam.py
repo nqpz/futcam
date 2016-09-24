@@ -3,6 +3,7 @@
 import sys
 import argparse
 import collections
+import time
 
 import pygame
 import numpy
@@ -112,10 +113,13 @@ class FutCam:
                 frame = self.futhark.scale_to(frame, w, h)
 
             # Call Futhark filters.
+            time_start = time.time()
             for f, u in zip(applied_filters, user_values[1:] + [user_value]):
                 frame = self.filters[f](frame, u)
             if not type(frame) is numpy.ndarray:
                 frame = frame.get()
+            time_end = time.time()
+            futhark_dur_ms = (time_end - time_start) * 1000
 
             # Mess with the internal representation.
             frame = numpy.rot90(frame)
@@ -130,7 +134,9 @@ class FutCam:
                 self.message(filter_names[filter_index] + '?',
                              (5, 5 + 30 * len(applied_filters)))
                 self.message('FPS: {:.02f}'.format(fps),
-                             (self.width - 125, 5))
+                             (self.width - 210, 5))
+                self.message('Futhark: {:.02f} ms'.format(futhark_dur_ms),
+                             (self.width - 250, 35))
     
             # Show on screen.
             pygame.display.flip()
