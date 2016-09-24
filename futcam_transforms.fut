@@ -5,29 +5,28 @@ default (f32)
 
 entry invert_rgb(frame : [h][w]pixel) : [h][w]pixel =
   map (fn (row : [w]pixel) : [w]pixel =>
-         map (fn (pixel : pixel) : pixel =>
-                let r = pixel[0]
-                let g = pixel[1]
-                let b = pixel[2]
-                in [255u8 - r, 255u8 -g, 255u8 - b])
+         map (fn (p : pixel) : pixel =>
+                let (r, g, b) = get_rgb p
+                let r' = 255u32 - r
+                let g' = 255u32 - g
+                let b' = 255u32 - b
+                in set_rgb (r', g', b'))
          row)
   frame
 
 entry dim_sides(frame : [h][w]pixel) : [h][w]pixel =
   map (fn (row : [w]pixel, y : i32) : [w]pixel =>
          map (fn (pixel : pixel, x : i32) : pixel =>
-                let r = pixel[0]
-                let g = pixel[1]
-                let b = pixel[2]
+                let (r, g, b) = get_rgb(pixel)
                 let x_center_closeness = 1.0f32 - f32 (abs (w / 2 - x)) / (f32 (w / 2))
                 let y_center_closeness = 1.0f32 - f32 (abs (h / 2 - y)) / (f32 (h / 2))
                 let center_closeness = x_center_closeness * y_center_closeness
                 let strength = 1.1f32
                 let center_closeness' = center_closeness ** strength
-                let r' = u8 (f32 r * center_closeness')
-                let g' = u8 (f32 g * center_closeness')
-                let b' = u8 (f32 b * center_closeness')
-                in [r', g', b'])
+                let r' = u32 (f32 r * center_closeness')
+                let g' = u32 (f32 g * center_closeness')
+                let b' = u32 (f32 b * center_closeness')
+                in set_rgb(r', g', b'))
          (zip row (iota w)))
   (zip frame (iota h))
 
@@ -55,7 +54,9 @@ entry fisheye(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
          (iota w))
   (iota h)
 
-fun intensity (c: pixel): int = (int c[0] * 2 + int c[1] * 3 + int c[2]) / 6
+fun intensity (p: pixel): int =
+  let (r, g, b) = get_rgb(p)
+  in (int r * 2 + int g * 3 + int b) / 6
 
 fun min (x: int) (y: int): int = if x < y then x else y
 
@@ -96,7 +97,7 @@ fun sqIndex (frame: [h][w]pixel) ((x,y): (f32,f32)): pixel =
   let y' = fromSq w y
   in if x' >= 0 && x' < h && y' >= 0 && y' < w
      then unsafe frame[x', y']
-     else [0u8,0u8,0u8]
+     else set_rgb(0u32,0u32,0u32)
 
 entry whirl(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
   map (fn x: [w]pixel =>
@@ -111,19 +112,19 @@ entry whirl(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
              (map (toSq w) (iota w)))
       (map (toSq h) (iota h))
 
-fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
+-- fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
 
-entry prefixMax(frame : [h][w]pixel, _distortion : f32) : [h][w]pixel =
-  map (fn row: [w]pixel =>
-         let rs = row[0:w,0]
-         let gs = row[0:w,1]
-         let bs = row[0:w,2]
-         in transpose ([(scan max8 0u8 rs), (scan max8 0u8 gs), (scan max8 0u8 bs)]))
-   frame
+-- entry prefixMax(frame : [h][w]pixel, _distortion : f32) : [h][w]pixel =
+--   map (fn row: [w]pixel =>
+--          let rs = row[0:w,0]
+--          let gs = row[0:w,1]
+--          let bs = row[0:w,2]
+--          in transpose ([(scan max8 0u8 rs), (scan max8 0u8 gs), (scan max8 0u8 bs)]))
+--    frame
 
 fun desaturate (p: pixel): pixel =
-  let v = u8 (intensity p)
-  in [v,v,v]
+  let v = u32 (intensity p)
+  in set_rgb(v,v,v)
 
 fun rotation ((x,y): (int,int)): f32 =
   let r = sqrt32 (f32 (x*x + y*y))

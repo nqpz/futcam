@@ -8,11 +8,11 @@ entry scale_to_simple(frame : [h0][w0]pixel, w1 : i32, h1 : i32) : [h1][w1]pixel
                    let y1_norm = f32 (y1 - h1 / 2)
                    let y0_norm = y1_norm / y_factor
                    let y0 = (i32 y0_norm) + h0 / 2
-                   
+
                    let x1_norm = f32 (x1 - w1 / 2)
                    let x0_norm = x1_norm / x_factor
                    let x0 = (i32 x0_norm) + w0 / 2
-                   
+
                    let pixel = unsafe frame[y0][x0]
                    in pixel)
          (iota w1))
@@ -21,14 +21,12 @@ entry scale_to_simple(frame : [h0][w0]pixel, w1 : i32, h1 : i32) : [h1][w1]pixel
 type pixel_float = (f32, f32, f32)
 
 fun pixel_float(pixel : pixel) : pixel_float =
-  let r = pixel[0]
-  let g = pixel[1]
-  let b = pixel[2]
+  let (r, g, b) = get_rgb(pixel)
   in (f32 r, f32 g, f32 b)
 
 fun pixel_unfloat(pixel : pixel_float) : pixel =
   let (r, g, b) = pixel
-  in [u8 r, u8 g, u8 b]
+  in set_rgb(u32 r, u32 g, u32 b)
 
 fun pixel_add(a : pixel_float, b : pixel_float) : pixel_float =
   let (r_a, g_a, b_a) = a
@@ -38,7 +36,7 @@ fun pixel_add(a : pixel_float, b : pixel_float) : pixel_float =
 fun pixel_mult_factor(p : pixel_float, f : f32) : pixel_float =
   let (r, g, b) = p
   in (r * f, g * f, b * f)
-  
+
 entry scale_to_thoughtful(frame : [h0][w0]pixel, w1 : i32, h1 : i32) : [h1][w1]pixel =
   let y_factor = (f32 h1) / (f32 h0)
   let x_factor = (f32 w1) / (f32 w0)
@@ -47,7 +45,7 @@ entry scale_to_thoughtful(frame : [h0][w0]pixel, w1 : i32, h1 : i32) : [h1][w1]p
                    let y1_norm = f32 (y1 - h1 / 2)
                    let y0_norm = y1_norm / y_factor
                    let y0 = y0_norm + f32 (h0 / 2)
-                   
+
                    let x1_norm = f32 (x1 - w1 / 2)
                    let x0_norm = x1_norm / x_factor
                    let x0 = x0_norm + f32 (w0 / 2)

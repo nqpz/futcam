@@ -63,7 +63,7 @@ class FutCam:
             'warhol': trans.warhol,
             'quad': trans.quad,
             'whirl': trans.whirl,
-            'a mystery': trans.prefixMax,
+            # 'a mystery': trans.prefixMax,
         }
         distorts = []
         distort_names = distort_methods.keys()
@@ -75,7 +75,7 @@ class FutCam:
                 return 1
 
             # Mess with the internal representation.
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
 
             if self.scale_to is not None:
                 w, h = self.scale_to
@@ -121,7 +121,7 @@ class FutCam:
 def main(args):
     def size(s):
         return tuple(map(int, s.split('x')))
-    
+
     arg_parser = argparse.ArgumentParser()
     arg_parser.add_argument('--resolution', type=size, metavar='WIDTHxHEIGHT',
                             help='set the resolution of the webcam instead of relying on its default resolution')
