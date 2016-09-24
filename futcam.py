@@ -46,12 +46,7 @@ class FutCam:
         # Load the library.
         self.futhark = futcamlib.futcamlib()
 
-        # Filter tables.
-        self.scale_methods = [
-            self.futhark.scale_to_thoughtful,
-            self.futhark.scale_to_simple
-        ]
-
+        # Filters.
         self.filters = collections.OrderedDict([
             ('fisheye',
              lambda frame, user_value:
@@ -87,8 +82,6 @@ class FutCam:
 
     def loop(self):
         filter_names = self.filters.keys()
-
-        scale_index = 0
         filter_index = 0
 
         applied_filters = []
@@ -114,7 +107,7 @@ class FutCam:
             # Scale if asked to.
             if self.scale_to is not None:
                 w, h = self.scale_to
-                frame = self.scale_methods[scale_index](frame, w, h)
+                frame = self.futhark.scale_to(frame, w, h)
 
             # Call Futhark filters.
             for f, u in zip(applied_filters, user_values[1:] + [user_value]):
@@ -148,9 +141,6 @@ class FutCam:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         return 0
-
-                    elif event.key == pygame.K_s:
-                        scale_index = (scale_index + 1) % len(scale_methods)
 
                     elif event.key == pygame.K_UP:
                         filter_index = (filter_index + 1) % len(self.filters)

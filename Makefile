@@ -2,7 +2,7 @@
 
 all: futcamlib.py
 
-futcamlib.py: futcamlib.fut
+futcamlib.py: futcamlib.fut futcamlib/*.fut
 	futhark-pyopencl --library futcamlib.fut
 
 clean:
