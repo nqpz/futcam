@@ -97,6 +97,7 @@ class FutCam:
 
         user_value = 0
         user_value_status = 0
+        user_values = []
         while True:
             # Read frame.
             retval, frame = self.cam.read()
@@ -113,8 +114,8 @@ class FutCam:
                 frame = self.scale_methods[scale_index](frame, w, h)
 
             # Call Futhark filters.
-            for f in applied_filters:
-                frame = self.filters[f](frame, user_value)
+            for f, u in zip(applied_filters, user_values[1:] + [user_value]):
+                frame = self.filters[f](frame, u)
             if not type(frame) is numpy.ndarray:
                 frame = frame.get()
 
@@ -155,9 +156,12 @@ class FutCam:
 
                     elif event.key == pygame.K_RETURN:
                         applied_filters.append(filter_names[filter_index])
+                        user_values.append(user_value)
+                        user_value = 0
                     elif event.key == pygame.K_BACKSPACE:
                         applied_filters = applied_filters[:-1]
-
+                        user_value = user_values[-1]
+                        user_values = user_values[:-1]
                     elif event.key == pygame.K_LEFT:
                         user_value_status = 1
                     elif event.key == pygame.K_RIGHT:
