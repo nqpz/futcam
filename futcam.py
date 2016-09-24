@@ -53,29 +53,28 @@ class FutCam:
             trans.scale_to_simple
         ]
 
-        # Filters.
         self.filters = collections.OrderedDict([
+            ('fisheye',
+             lambda frame, user_value:
+             trans.fisheye(frame, max(0.1, abs(user_value * 0.05 + 1.2)))),
+            ('warhol',
+             lambda frame, _:
+             trans.warhol(frame)),
+            ('whirl',
+             lambda frame, user_value:
+             trans.whirl(frame, user_value * 0.1)),
+            ('quad',
+             lambda frame, _:
+             trans.quad(frame)),
+            ('greyscale',
+             lambda frame, user_value:
+             trans.greyscale(frame, user_value * 0.1)),
             ('invert_rgb',
              lambda frame, _:
              trans.invert_rgb(frame)),
             ('dim_sides',
              lambda frame, user_value:
              trans.dim_sides(frame, max(abs(user_value) * 0.1, 0.1))),
-            ('fisheye',
-             lambda frame, user_value:
-             trans.fisheye(frame, max(0.1, abs(user_value * 0.05 + 1)))),
-            ('greyscale',
-             lambda frame, user_value:
-             trans.greyscale(frame, user_value * 0.1)),
-            ('warhol',
-             lambda frame, _:
-             trans.warhol(frame)),
-            ('quad',
-             lambda frame, _:
-             trans.quad(frame)),
-            ('whirl',
-             lambda frame, user_value:
-             trans.whirl(frame, user_value * 0.1)),
             # ('a mystery',
             #  lambda frame, _:
             #  trans.prefixMax(frame)),
@@ -131,6 +130,7 @@ class FutCam:
             # Show on screen.
             pygame.display.flip()
 
+            # Check events.
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return 0
