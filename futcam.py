@@ -95,6 +95,7 @@ class FutCam:
         applied_filters = []
 
         user_value = 0
+        user_value_status = 0
         while True:
             # Read frame.
             retval, frame = self.cam.read()
@@ -134,6 +135,7 @@ class FutCam:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     return 0
+
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         return 0
@@ -152,9 +154,18 @@ class FutCam:
                         applied_filters = applied_filters[:-1]
 
                     elif event.key == pygame.K_LEFT:
-                        user_value -= 1
+                        user_value_status = 1
                     elif event.key == pygame.K_RIGHT:
-                        user_value += 1
+                        user_value_status = -1
+
+                elif event.type == pygame.KEYUP:
+                    if event.key == pygame.K_LEFT:
+                        user_value_status = 0
+                    elif event.key == pygame.K_RIGHT:
+                        user_value_status = 0
+
+            if user_value_status != 0:
+                user_value += user_value_status
 
 def main(args):
     def size(s):
