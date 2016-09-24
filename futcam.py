@@ -160,9 +160,10 @@ class FutCam:
                         user_values.append(user_value)
                         user_value = 0
                     elif event.key == pygame.K_BACKSPACE:
-                        applied_filters = applied_filters[:-1]
-                        user_value = user_values[-1]
-                        user_values = user_values[:-1]
+                        if len(user_values) > 0:
+                            applied_filters = applied_filters[:-1]
+                            user_value = user_values[-1]
+                            user_values = user_values[:-1]
                     elif event.key == pygame.K_LEFT:
                         user_value_status = 1
                     elif event.key == pygame.K_RIGHT:
