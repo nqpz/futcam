@@ -2,6 +2,13 @@ include futcamlib.base
 include futcamlib.scale
 default (f32)
 
+-- This shouldn't be necessary, but NumPy's reshape is stupid.
+entry do_nothing(frame : [h][w]pixel) : [h][w]pixel =
+  map (fn (row : [w]pixel) : [w]pixel =>
+         map (fn (p : pixel) : pixel => p)
+         row)
+  frame
+
 entry invert_rgb(frame : [h][w]pixel) : [h][w]pixel =
   map (fn (row : [w]pixel) : [w]pixel =>
          map (fn (p : pixel) : pixel =>

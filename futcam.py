@@ -44,39 +44,39 @@ class FutCam:
         self.clock = pygame.time.Clock()
 
         # Load the library.
-        trans = futcamlib.futcamlib()
+        self.futhark = futcamlib.futcamlib()
 
         # Filter tables.
         self.scale_methods = [
-            trans.scale_to_thoughtful,
-            trans.scale_to_simple
+            self.futhark.scale_to_thoughtful,
+            self.futhark.scale_to_simple
         ]
 
         self.filters = collections.OrderedDict([
             ('fisheye',
              lambda frame, user_value:
-             trans.fisheye(frame, max(0.1, abs(user_value * 0.05 + 1.2)))),
+             self.futhark.fisheye(frame, max(0.1, abs(user_value * 0.05 + 1.2)))),
             ('warhol',
              lambda frame, _:
-             trans.warhol(frame)),
+             self.futhark.warhol(frame)),
             ('whirl',
              lambda frame, user_value:
-             trans.whirl(frame, user_value * 0.1)),
+             self.futhark.whirl(frame, user_value * 0.1)),
             ('quad',
              lambda frame, _:
-             trans.quad(frame)),
+             self.futhark.quad(frame)),
             ('greyscale',
              lambda frame, user_value:
-             trans.greyscale(frame, user_value * 0.1)),
+             self.futhark.greyscale(frame, user_value * 0.1)),
             ('invert_rgb',
              lambda frame, _:
-             trans.invert_rgb(frame)),
+             self.futhark.invert_rgb(frame)),
             ('dim_sides',
              lambda frame, user_value:
-             trans.dim_sides(frame, max(abs(user_value) * 0.1, 0.1))),
+             self.futhark.dim_sides(frame, max(abs(user_value) * 0.1, 0.1))),
             # ('a mystery',
             #  lambda frame, _:
-            #  trans.prefixMax(frame)),
+            #  self.futhark.prefixMax(frame)),
         ])
 
         return self.loop()
@@ -103,13 +103,14 @@ class FutCam:
 
             # Mess with the internal representation.
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+            frame = self.futhark.do_nothing(frame).get()
 
             # Scale if asked to.
             if self.scale_to is not None:
                 w, h = self.scale_to
                 frame = self.scale_methods[scale_index](frame, w, h)
 
-            # Call Futhark filter.
+            # Call Futhark filters.
             for f in applied_filters:
                 frame = self.filters[f](frame, user_value)
             if not type(frame) is numpy.ndarray:
