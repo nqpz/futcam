@@ -26,4 +26,6 @@ of the filters.
 
 Press Enter to activate a filter.  Press backspace to deactivate it.
 
+Press `h` to toggle the HUD.
+
 Press `q` to exit.

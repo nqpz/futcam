@@ -93,6 +93,8 @@ class FutCam:
 
         applied_filters = []
 
+        show_hud = True
+
         user_value = 0
         user_value_status = 0
         while True:
@@ -123,13 +125,14 @@ class FutCam:
             pygame.surfarray.blit_array(self.screen, frame)
 
             # Render HUD.
-            for i, f in zip(range(len(applied_filters)), applied_filters):
-                self.message(f, (5, 5 + 30 * i))
-            self.message(filter_names[filter_index] + '?',
-                         (5, 5 + 30 * len(applied_filters)))
-            self.message('FPS: {:.02f}'.format(self.clock.get_fps()),
-                         (self.width - 125, 5))
-
+            if show_hud:
+                for i, f in zip(range(len(applied_filters)), applied_filters):
+                    self.message(f, (5, 5 + 30 * i))
+                self.message(filter_names[filter_index] + '?',
+                             (5, 5 + 30 * len(applied_filters)))
+                self.message('FPS: {:.02f}'.format(self.clock.get_fps()),
+                             (self.width - 125, 5))
+    
             # Show on screen.
             pygame.display.flip()
 
@@ -159,6 +162,9 @@ class FutCam:
                         user_value_status = 1
                     elif event.key == pygame.K_RIGHT:
                         user_value_status = -1
+
+                    elif event.key == pygame.K_h:
+                        show_hud = not show_hud
 
                 elif event.type == pygame.KEYUP:
                     if event.key == pygame.K_LEFT:
