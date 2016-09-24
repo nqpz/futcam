@@ -99,9 +99,12 @@ class FutCam:
             fps = self.clock.get_fps()
 
             # Read frame.
+            time_start = time.time()
             retval, frame = self.cam.read()
             if not retval:
                 return 1
+            time_end = time.time()
+            cam_read_dur_ms = (time_end - time_start) * 1000
 
             # Mess with the internal representation.
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
@@ -133,10 +136,12 @@ class FutCam:
                     self.message(f, (5, 5 + 30 * i))
                 self.message(filter_names[filter_index] + '?',
                              (5, 5 + 30 * len(applied_filters)))
-                self.message('FPS: {:.02f}'.format(fps),
-                             (self.width - 210, 5))
+                self.message('Camera read: {:.02f} ms'.format(cam_read_dur_ms),
+                             (self.width - 310, 5))
                 self.message('Futhark: {:.02f} ms'.format(futhark_dur_ms),
                              (self.width - 250, 35))
+                self.message('FPS: {:.02f}'.format(fps),
+                             (self.width - 210, 65))
     
             # Show on screen.
             pygame.display.flip()
