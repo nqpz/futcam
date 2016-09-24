@@ -72,6 +72,9 @@ class FutCam:
             ('hue focus',
              lambda frame, user_value:
              self.futhark.hue_focus(frame, user_value * 10.0)),
+            ('merge colors',
+             lambda frame, user_value:
+             self.futhark.merge_colors(frame, 1.0 + user_value * 5.0)),
             # ('a mystery',
             #  lambda frame, _:
             #  self.futhark.prefixMax(frame)),

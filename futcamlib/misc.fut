@@ -54,6 +54,18 @@ entry hue_focus(frame : [h][w]pixel, hue_focus : f32) : [h][w]pixel =
                 in set_rgb (r, g, b))
          row)
   frame
+
+entry merge_colors(frame : [h][w]pixel, group_size : f32) : [h][w]pixel =
+  map (fn (row : [w]pixel) : [w]pixel =>
+         map (fn (p : pixel) : pixel =>
+                let (h, s, v) = get_hsv p
+                let h' = f32 (i32 (h / group_size)) * group_size
+                let s' = (f32 (i32 ((s * 360.0) / group_size)) * group_size) / 360.0
+                let v' = (f32 (i32 ((v * 360.0) / group_size)) * group_size) / 360.0
+                let (r, g, b) = hsv_to_rgb(h', s', v')
+                in set_rgb (r, g, b))
+         row)
+  frame
   
 -- fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
 
