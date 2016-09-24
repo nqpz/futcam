@@ -6,7 +6,6 @@ import collections
 
 import pygame
 import numpy
-import cv
 import cv2
 
 import futcamlib
@@ -27,14 +26,14 @@ class FutCam:
 
         if self.resolution is not None:
             w, h = self.resolution
-            self.cam.set(cv.CV_CAP_PROP_FRAME_WIDTH, w)
-            self.cam.set(cv.CV_CAP_PROP_FRAME_HEIGHT, h)
+            self.cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, w)
+            self.cam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, h)
 
         if self.scale_to is not None:
             self.width, self.height = self.scale_to
         else:
-            self.width = int(self.cam.get(cv.CV_CAP_PROP_FRAME_WIDTH))
-            self.height = int(self.cam.get(cv.CV_CAP_PROP_FRAME_HEIGHT))
+            self.width = int(self.cam.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH))
+            self.height = int(self.cam.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT))
 
         # Setup pygame.
         pygame.init()
@@ -63,12 +62,15 @@ class FutCam:
             ('greyscale',
              lambda frame, user_value:
              self.futhark.greyscale(frame, user_value * 0.1)),
-            ('invert_rgb',
+            ('invert rgb',
              lambda frame, _:
              self.futhark.invert_rgb(frame)),
-            ('dim_sides',
+            ('dim sides',
              lambda frame, user_value:
              self.futhark.dim_sides(frame, max(abs(user_value) * 0.1, 0.1))),
+            ('hue focus',
+             lambda frame, user_value:
+             self.futhark.hue_focus(frame, user_value * 10.0)),
             # ('a mystery',
             #  lambda frame, _:
             #  self.futhark.prefixMax(frame)),
@@ -143,9 +145,9 @@ class FutCam:
                         return 0
 
                     elif event.key == pygame.K_UP:
-                        filter_index = (filter_index + 1) % len(self.filters)
-                    elif event.key == pygame.K_DOWN:
                         filter_index = (filter_index - 1) % len(self.filters)
+                    elif event.key == pygame.K_DOWN:
+                        filter_index = (filter_index + 1) % len(self.filters)
 
                     elif event.key == pygame.K_RETURN:
                         applied_filters.append(filter_names[filter_index])
