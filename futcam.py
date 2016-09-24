@@ -17,54 +17,50 @@ class FutCam:
         self.resolution = resolution
         self.scale_to = scale_to
 
-    def message(self, what, where):
-        text = self.font.render(what, 1, (255, 255, 255))
-        self.screen.blit(text, where)
-
     def run(self):
         # Open a camera device for capturing.
-        cam = cv2.VideoCapture(0)
+        self.cam = cv2.VideoCapture(0)
 
-        if not cam.isOpened():
+        if not self.cam.isOpened():
             print 'error: could not open camera.' >> sys.stderr
             return 1
 
         if self.resolution is not None:
             w, h = self.resolution
-            cam.set(cv.CV_CAP_PROP_FRAME_WIDTH, w)
-            cam.set(cv.CV_CAP_PROP_FRAME_HEIGHT, h)
+            self.cam.set(cv.CV_CAP_PROP_FRAME_WIDTH, w)
+            self.cam.set(cv.CV_CAP_PROP_FRAME_HEIGHT, h)
 
         if self.scale_to is not None:
             width, height = self.scale_to
         else:
-            width = int(cam.get(cv.CV_CAP_PROP_FRAME_WIDTH))
-            height = int(cam.get(cv.CV_CAP_PROP_FRAME_HEIGHT))
+            width = int(self.cam.get(cv.CV_CAP_PROP_FRAME_WIDTH))
+            height = int(self.cam.get(cv.CV_CAP_PROP_FRAME_HEIGHT))
 
         size = (width, height)
 
         # Setup pygame.
         pygame.init()
         pygame.display.set_caption('futcam')
-        self.screen = screen = pygame.display.set_mode(size)
+        self.screen = pygame.display.set_mode(size)
         self.font = pygame.font.Font(None, 36)
 
-        # Setup the transforms.
+        # Load the library.
         trans = futcamlib.futcamlib()
 
-        scale_methods = [
+        # Filter tables.
+        self.scale_methods = [
             trans.scale_to_thoughtful,
             trans.scale_to_simple
         ]
-        scale_index = 0
 
-        distortion = 0
-        distort_methods = collections.OrderedDict([
+        # Filters.
+        self.filters = collections.OrderedDict([
             ('invert_rgb',
              lambda frame, _:
              trans.invert_rgb(frame)),
             ('dim_sides',
              lambda frame, user_value:
-             trans.dim_sides(frame, (abs(user_value) + 1) ** 0.7)),
+             trans.dim_sides(frame, max(abs(user_value) * 0.1, 0.1))),
             ('fisheye',
              lambda frame, user_value:
              trans.fisheye(frame, max(0.1, abs(user_value * 0.05 + 1)))),
@@ -84,26 +80,39 @@ class FutCam:
             #  lambda frame, _:
             #  trans.prefixMax(frame)),
         ])
-        distorts = []
-        distort_names = distort_methods.keys()
-        distort_index = 0
+
+        return self.loop()
+
+    def message(self, what, where):
+        text = self.font.render(what, 1, (255, 255, 255))
+        self.screen.blit(text, where)
+
+    def loop(self):
+        filter_names = self.filters.keys()
+
+        scale_index = 0
+        filter_index = 0
+
+        applied_filters = []
+
         user_value = 0
         while True:
             # Read frame.
-            retval, frame = cam.read()
+            retval, frame = self.cam.read()
             if not retval:
                 return 1
 
             # Mess with the internal representation.
             frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
 
+            # Scale if asked to.
             if self.scale_to is not None:
                 w, h = self.scale_to
-                frame = scale_methods[scale_index](frame, w, h)
+                frame = self.scale_methods[scale_index](frame, w, h)
 
-            # Call Futhark function.
-            for d in distorts:
-                frame = distort_methods[d](frame, user_value)
+            # Call Futhark filter.
+            for f in applied_filters:
+                frame = self.filters[f](frame, user_value)
             if not type(frame) is numpy.ndarray:
                 frame = frame.get()
 
@@ -111,12 +120,15 @@ class FutCam:
             frame = numpy.rot90(frame)
 
             # Show frame.
-            pygame.surfarray.blit_array(screen, frame)
+            pygame.surfarray.blit_array(self.screen, frame)
 
-            for (i,d) in zip(range(len(distorts)), distorts):
-                self.message(d, (0,30*i))
-            self.message(distort_names[distort_index] + '?', (0,30*len(distorts)))
+            # Render HUD.
+            for i, f in zip(range(len(applied_filters)), applied_filters):
+                self.message(f, (0, 30 * i))
+            self.message(filter_names[filter_index] + '?',
+                         (0, 30 * len(applied_filters)))
 
+            # Show on screen.
             pygame.display.flip()
 
             for event in pygame.event.get():
@@ -125,18 +137,24 @@ class FutCam:
                 elif event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_q:
                         return 0
-                    if event.key == pygame.K_DOWN:
-                        user_value -= 1
-                    if event.key == pygame.K_UP:
-                        user_value += 1
-                    if event.key == pygame.K_s:
+
+                    elif event.key == pygame.K_s:
                         scale_index = (scale_index + 1) % len(scale_methods)
-                    if event.key == pygame.K_d:
-                        distort_index = (distort_index + 1) % len(distort_methods)
-                    if event.key == pygame.K_RETURN:
-                        distorts += [distort_names[distort_index]]
-                    if event.key == pygame.K_BACKSPACE:
-                        distorts = distorts[:-1]
+
+                    elif event.key == pygame.K_UP:
+                        filter_index = (filter_index + 1) % len(self.filters)
+                    elif event.key == pygame.K_DOWN:
+                        filter_index = (filter_index - 1) % len(self.filters)
+
+                    elif event.key == pygame.K_RETURN:
+                        applied_filters.append(filter_names[filter_index])
+                    elif event.key == pygame.K_BACKSPACE:
+                        applied_filters = applied_filters[:-1]
+
+                    elif event.key == pygame.K_LEFT:
+                        user_value -= 1
+                    elif event.key == pygame.K_RIGHT:
+                        user_value += 1
 
 def main(args):
     def size(s):
