@@ -1,23 +1,20 @@
-# Misc. Futhark fun
-
-Futhark: http://futhark-lang.org/ and
-https://github.com/HIPERFIT/futhark
-
-
-## futcam.py
+# futcam
 
 Run Futhark code on a live webcam feed!
 
 Run `make` to build the library, and then run `./futcam.py` to run the
 program.
 
+Futhark: http://futhark-lang.org/ and
+https://github.com/HIPERFIT/futhark
 
-### Dependencies
+
+## Dependencies
 
 `futcam.py` depends on PyGame, NumPy, and OpenCV 2.
 
 
-### Keyboard controls
+## Keyboard controls
 
 Use up and down arrow keys to navigate the filters.
 
