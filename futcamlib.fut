@@ -1,6 +1,5 @@
-include futcam_base
-include futcam_scale
-
+include futcamlib.base
+include futcamlib.scale
 default (f32)
 
 entry invert_rgb(frame : [h][w]pixel) : [h][w]pixel =
@@ -14,15 +13,14 @@ entry invert_rgb(frame : [h][w]pixel) : [h][w]pixel =
          row)
   frame
 
-entry dim_sides(frame : [h][w]pixel) : [h][w]pixel =
+entry dim_sides(frame : [h][w]pixel, strength : f32) : [h][w]pixel =
   map (fn (row : [w]pixel, y : i32) : [w]pixel =>
          map (fn (pixel : pixel, x : i32) : pixel =>
-                let (r, g, b) = get_rgb(pixel)
                 let x_center_closeness = 1.0f32 - f32 (abs (w / 2 - x)) / (f32 (w / 2))
                 let y_center_closeness = 1.0f32 - f32 (abs (h / 2 - y)) / (f32 (h / 2))
                 let center_closeness = x_center_closeness * y_center_closeness
-                let strength = 1.1f32
-                let center_closeness' = center_closeness ** strength
+                let center_closeness' = center_closeness ** strength 
+                let (r, g, b) = get_rgb(pixel)
                 let r' = u32 (f32 r * center_closeness')
                 let g' = u32 (f32 g * center_closeness')
                 let b' = u32 (f32 b * center_closeness')
@@ -31,7 +29,6 @@ entry dim_sides(frame : [h][w]pixel) : [h][w]pixel =
   (zip frame (iota h))
 
 entry fisheye(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
-  let distortion = distortion + 1.3 in
   map (fn (y : i32) : [w]pixel =>
          map (fn (x : i32) : pixel =>
                 let y_scale = ((f32 (h / 2)) ** distortion) / (f32 (h / 2))
@@ -64,8 +61,8 @@ fun selectColour (colours: [n]pixel) (x: int): pixel =
   let range = 256 / n
   in unsafe colours[min (x/range) (n-1)]
 
-entry warhol(frame : [h][w]pixel, _distortion : f32) : [h][w]pixel =
-  let frame' = quad (frame, 0.0)
+entry warhol(frame : [h][w]pixel) : [h][w]pixel =
+  let frame' = quad frame
   let (urows,lrows) = split (h/2) frame'
   let (ul,ur) = split@1 (w/2) urows
   let (ll,lr) = split@1 (w/2) lrows
@@ -85,9 +82,11 @@ fun warholColourise(colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
   map (fn row : [w]pixel => map (selectColour colours) (map intensity row))
       frame
 
-entry quad(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
-  let n = 2 + int(distortion / 0.05) -- Niels, make a discrete interface.
-  in map (fn y: [w]pixel => map (fn x : pixel => unsafe frame[y%(h/n)*n,x%(w/n)*n]) (iota w))
+entry quad(frame : [h][w]pixel) : [h][w]pixel =
+  let n = 2
+  in map (fn y: [w]pixel =>
+            map (fn x : pixel => unsafe frame[y%(h/n)*n,x%(w/n)*n])
+                (iota w))
          (iota h)
 
 fun toSq   (w: int) (x: int): f32 = 2.0*f32 x/f32 w - 1.0
@@ -112,16 +111,6 @@ entry whirl(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
              (map (toSq w) (iota w)))
       (map (toSq h) (iota h))
 
--- fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
-
--- entry prefixMax(frame : [h][w]pixel, _distortion : f32) : [h][w]pixel =
---   map (fn row: [w]pixel =>
---          let rs = row[0:w,0]
---          let gs = row[0:w,1]
---          let bs = row[0:w,2]
---          in transpose ([(scan max8 0u8 rs), (scan max8 0u8 gs), (scan max8 0u8 bs)]))
---    frame
-
 fun desaturate (p: pixel): pixel =
   let v = u32 (intensity p)
   in set_rgb(v,v,v)
@@ -141,3 +130,13 @@ entry greyscale(frame: [h][w]pixel, distortion: f32): [h][w]pixel =
                        else p)
            (iota w))
    (iota h)
+
+-- fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
+
+-- entry prefixMax(frame : [h][w]pixel) : [h][w]pixel =
+--   map (fn row: [w]pixel =>
+--          let rs = row[0:w,0]
+--          let gs = row[0:w,1]
+--          let bs = row[0:w,2]
+--          in transpose ([(scan max8 0u8 rs), (scan max8 0u8 gs), (scan max8 0u8 bs)]))
+--    frame

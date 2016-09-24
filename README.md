@@ -6,7 +6,8 @@ https://github.com/HIPERFIT/futhark
 
 ## futcam.py
 
-Depends on OpenCV 2 and PyGame.  Run `make` to build the library.
+Depends on OpenCV 2, PyGame, and NumPy.  Run `make` to build the
+library.
 
 Run Futhark code on a live webcam feed!
 

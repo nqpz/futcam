@@ -2,13 +2,14 @@
 
 import sys
 import argparse
+import collections
 
 import pygame
 import numpy
 import cv
 import cv2
 
-import futcam_transforms
+import futcamlib
 
 
 class FutCam:
@@ -48,7 +49,7 @@ class FutCam:
         self.font = pygame.font.Font(None, 36)
 
         # Setup the transforms.
-        trans = futcam_transforms.futcam_transforms()
+        trans = futcamlib.futcamlib()
 
         scale_methods = [
             trans.scale_to_thoughtful,
@@ -57,17 +58,36 @@ class FutCam:
         scale_index = 0
 
         distortion = 0
-        distort_methods = {
-            'fisheye': trans.fisheye,
-            'greyscale': trans.greyscale,
-            'warhol': trans.warhol,
-            'quad': trans.quad,
-            'whirl': trans.whirl,
-            # 'a mystery': trans.prefixMax,
-        }
+        distort_methods = collections.OrderedDict([
+            ('invert_rgb',
+             lambda frame, _:
+             trans.invert_rgb(frame)),
+            ('dim_sides',
+             lambda frame, user_value:
+             trans.dim_sides(frame, (abs(user_value) + 1) ** 0.7)),
+            ('fisheye',
+             lambda frame, user_value:
+             trans.fisheye(frame, max(0.1, abs(user_value * 0.05 + 1)))),
+            ('greyscale',
+             lambda frame, user_value:
+             trans.greyscale(frame, user_value * 0.1)),
+            ('warhol',
+             lambda frame, _:
+             trans.warhol(frame)),
+            ('quad',
+             lambda frame, _:
+             trans.quad(frame)),
+            ('whirl',
+             lambda frame, user_value:
+             trans.whirl(frame, user_value * 0.1)),
+            # ('a mystery',
+            #  lambda frame, _:
+            #  trans.prefixMax(frame)),
+        ])
         distorts = []
         distort_names = distort_methods.keys()
         distort_index = 0
+        user_value = 0
         while True:
             # Read frame.
             retval, frame = cam.read()
@@ -83,7 +103,7 @@ class FutCam:
 
             # Call Futhark function.
             for d in distorts:
-                frame = distort_methods[d](frame, distortion)
+                frame = distort_methods[d](frame, user_value)
             if not type(frame) is numpy.ndarray:
                 frame = frame.get()
 
@@ -106,9 +126,9 @@ class FutCam:
                     if event.key == pygame.K_q:
                         return 0
                     if event.key == pygame.K_DOWN:
-                        distortion -= 0.05
+                        user_value -= 1
                     if event.key == pygame.K_UP:
-                        distortion += 0.05
+                        user_value += 1
                     if event.key == pygame.K_s:
                         scale_index = (scale_index + 1) % len(scale_methods)
                     if event.key == pygame.K_d:

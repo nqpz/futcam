@@ -1,4 +1,5 @@
-include futcam_base
+include futcamlib.base
+default (f32)
 
 entry scale_to_simple(frame : [h0][w0]pixel, w1 : i32, h1 : i32) : [h1][w1]pixel =
   let y_factor = (f32 h1) / (f32 h0)
