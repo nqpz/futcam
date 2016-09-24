@@ -31,18 +31,17 @@ class FutCam:
             self.cam.set(cv.CV_CAP_PROP_FRAME_HEIGHT, h)
 
         if self.scale_to is not None:
-            width, height = self.scale_to
+            self.width, self.height = self.scale_to
         else:
-            width = int(self.cam.get(cv.CV_CAP_PROP_FRAME_WIDTH))
-            height = int(self.cam.get(cv.CV_CAP_PROP_FRAME_HEIGHT))
-
-        size = (width, height)
+            self.width = int(self.cam.get(cv.CV_CAP_PROP_FRAME_WIDTH))
+            self.height = int(self.cam.get(cv.CV_CAP_PROP_FRAME_HEIGHT))
 
         # Setup pygame.
         pygame.init()
         pygame.display.set_caption('futcam')
-        self.screen = pygame.display.set_mode(size)
+        self.screen = pygame.display.set_mode((self.width, self.height))
         self.font = pygame.font.Font(None, 36)
+        self.clock = pygame.time.Clock()
 
         # Load the library.
         trans = futcamlib.futcamlib()
@@ -124,9 +123,11 @@ class FutCam:
 
             # Render HUD.
             for i, f in zip(range(len(applied_filters)), applied_filters):
-                self.message(f, (0, 30 * i))
+                self.message(f, (5, 5 + 30 * i))
             self.message(filter_names[filter_index] + '?',
-                         (0, 30 * len(applied_filters)))
+                         (5, 5 + 30 * len(applied_filters)))
+            self.message('FPS: {:.02f}'.format(self.clock.get_fps()),
+                         (self.width - 125, 5))
 
             # Show on screen.
             pygame.display.flip()
@@ -166,6 +167,8 @@ class FutCam:
 
             if user_value_status != 0:
                 user_value += user_value_status
+
+            self.clock.tick()
 
 def main(args):
     def size(s):
