@@ -75,6 +75,12 @@ class FutCam:
             ('merge colors',
              lambda frame, user_value:
              self.futhark.merge_colors(frame, 1.0 + user_value * 5.0)),
+            ('equalise saturation',
+             lambda frame, _user_value:
+             self.futhark.equalise_saturation(frame)),
+            ('median filter',
+             lambda frame, user_value:
+             self.futhark.median_filter(frame, int(user_value))),
             # ('a mystery',
             #  lambda frame, _:
             #  self.futhark.prefixMax(frame)),
@@ -173,9 +179,9 @@ class FutCam:
                             user_value = user_values[-1]
                             user_values = user_values[:-1]
                     elif event.key == pygame.K_LEFT:
-                        user_value_status = 1
-                    elif event.key == pygame.K_RIGHT:
                         user_value_status = -1
+                    elif event.key == pygame.K_RIGHT:
+                        user_value_status = 1
 
                     elif event.key == pygame.K_h:
                         show_hud = not show_hud

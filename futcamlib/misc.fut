@@ -66,7 +66,65 @@ entry merge_colors(frame : [h][w]pixel, group_size : f32) : [h][w]pixel =
                 in set_rgb (r, g, b))
          row)
   frame
+
+entry equalise_saturation(frame : [h][w]pixel) : [h][w]pixel =
+  map (fn (row : [w]pixel) : [w]pixel =>
+         map (fn (p : pixel) : pixel =>
+                let (h, _s, v) = get_hsv p
+                let h' = h
+                let s' = 0.5
+                let v' = v
+                let (r, g, b) = hsv_to_rgb(h', s', v')
+                in set_rgb (r, g, b))
+         row)
+  frame
+
+fun minu (a : u32) (b : u32) : u32 =
+  if a < b then a else b
   
+fun nth_smallest(xs : [n]u32, nth : i32) : u32 =
+  let smallest = reduce minu xs[0] xs
+  loop (smallest) = for _i < nth do
+    reduce (small_enough smallest) smallest xs
+  in smallest
+
+fun small_enough (threshold : u32) (a : u32) (b : u32) : u32 =
+  if a < b
+  then if a <= threshold
+       then b
+       else a
+  else if b <= threshold
+  then a
+  else b
+
+fun median(xs : [n]u32) : u32 = nth_smallest(xs, n / 2)
+
+fun safe(x : i32, m : i32) : i32 =
+  if x < 0
+  then 0
+  else if x > m - 1
+  then m - 1
+  else x
+  
+entry median_filter(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
+  loop (frame) = for _i < iterations do
+    map (fn (y : i32) : [w]pixel =>
+           map (fn (x : i32) : pixel =>
+                  let um = unsafe frame[safe(y - 1, h)][x]
+                  let ur = unsafe frame[safe(y - 1, h)][safe(x + 1, w)]
+                  let cr = unsafe frame[y][safe(x + 1, w)]
+                  let lr = unsafe frame[safe(y + 1, h)][safe(x + 1, w)]
+                  let lm = unsafe frame[safe(y + 1, h)][x]
+                  let ll = unsafe frame[safe(y + 1, h)][safe(x - 1, w)]
+                  let cl = unsafe frame[y][safe(x - 1, w)]
+                  let ul = unsafe frame[safe(y - 1, h)][safe(x - 1, w)]
+                  let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
+                  let p = median neighbors
+                  in p)
+           (iota w))
+    (iota h)
+  in frame
+
 -- fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
 
 -- entry prefixMax(frame : [h][w]pixel) : [h][w]pixel =
