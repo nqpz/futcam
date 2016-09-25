@@ -125,6 +125,31 @@ entry median_filter(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
     (iota h)
   in frame
 
+fun pixel_average (pixels : [n]u32) : u32 =
+  let rgbs = map get_rgb pixels
+  let (r0, g0, b0) = reduce (fn (a0, b0, c0) (a1, b1, c1) => (a0 + a1, b0 + b1, c0 + c1)) (0u32, 0u32, 0u32) rgbs
+  in set_rgb (r0 / u32 n, g0 / u32 n, b0 / u32 n)
+
+entry slow_blur(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
+  loop (frame) = for _i < iterations do
+    map (fn (y : i32) : [w]pixel =>
+           map (fn (x : i32) : pixel =>
+                  let um = unsafe frame[safe(y - 1, h)][x]
+                  let ur = unsafe frame[safe(y - 1, h)][safe(x + 1, w)]
+                  let cr = unsafe frame[y][safe(x + 1, w)]
+                  let lr = unsafe frame[safe(y + 1, h)][safe(x + 1, w)]
+                  let lm = unsafe frame[safe(y + 1, h)][x]
+                  let ll = unsafe frame[safe(y + 1, h)][safe(x - 1, w)]
+                  let cl = unsafe frame[y][safe(x - 1, w)]
+                  let ul = unsafe frame[safe(y - 1, h)][safe(x - 1, w)]
+                  let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
+                  let p = pixel_average neighbors
+                  in p)
+           (iota w))
+    (iota h)
+  in frame
+
+
 -- fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
 
 -- entry prefixMax(frame : [h][w]pixel) : [h][w]pixel =
