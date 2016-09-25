@@ -1,3 +1,4 @@
+include futcamlib.mystery
 include futcamlib.fisheye
 include futcamlib.warhol
 include futcamlib.whirl

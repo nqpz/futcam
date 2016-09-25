@@ -81,9 +81,9 @@ class FutCam:
             ('median filter',
              lambda frame, user_value:
              self.futhark.median_filter(frame, int(user_value))),
-            # ('a mystery',
-            #  lambda frame, _:
-            #  self.futhark.prefixMax(frame)),
+            ('a mystery',
+             lambda frame, _:
+             self.futhark.mystery(frame)),
         ])
 
         return self.loop()
