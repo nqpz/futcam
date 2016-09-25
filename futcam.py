@@ -129,8 +129,8 @@ class FutCam:
 
             # Call stacked filters.
             time_start = time.time()
-            for f, u in zip(applied_filters, user_values[1:] + [user_value]):
-                frame = self.filters[f](frame, u)
+            for i, u in zip(applied_filters, user_values):
+                frame = self.filters[filter_names[i]](frame, u)
 
             # Apply the currently selected filter.
             frame = self.filters[filter_names[filter_index]](frame, user_value).get()
@@ -146,8 +146,8 @@ class FutCam:
 
             # Render HUD.
             if show_hud:
-                for i, f, u in zip(range(len(applied_filters)), applied_filters, user_values):
-                    self.message('%s %.2f' % (f,u), (5, 5 + 30 * i))
+                for i, fi, u in zip(range(len(applied_filters)), applied_filters, user_values):
+                    self.message('%s %.2f' % (filter_names[fi],u), (5, 5 + 30 * i))
                 self.message('%s %.2f?' % (filter_names[filter_index], user_value),
                              (5, 5 + 30 * len(applied_filters)))
                 self.message('Camera read: {:.02f} ms'.format(cam_read_dur_ms),
@@ -156,7 +156,7 @@ class FutCam:
                              (self.width - 250, 35))
                 self.message('FPS: {:.02f}'.format(fps),
                              (self.width - 210, 65))
-    
+
             # Show on screen.
             pygame.display.flip()
 
@@ -175,11 +175,12 @@ class FutCam:
                         filter_index = (filter_index + 1) % len(self.filters)
 
                     elif event.key == pygame.K_RETURN:
-                        applied_filters.append(filter_names[filter_index])
+                        applied_filters.append(filter_index)
                         user_values.append(user_value)
                         user_value = 0
                     elif event.key == pygame.K_BACKSPACE:
                         if len(user_values) > 0:
+                            filter_index = applied_filters[-1]
                             applied_filters = applied_filters[:-1]
                             user_value = user_values[-1]
                             user_values = user_values[:-1]
