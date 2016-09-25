@@ -146,9 +146,9 @@ class FutCam:
 
             # Render HUD.
             if show_hud:
-                for i, f in zip(range(len(applied_filters)), applied_filters):
-                    self.message(f, (5, 5 + 30 * i))
-                self.message(filter_names[filter_index] + '?',
+                for i, f, u in zip(range(len(applied_filters)), applied_filters, user_values):
+                    self.message('%s %.2f' % (f,u), (5, 5 + 30 * i))
+                self.message('%s %.2f?' % (filter_names[filter_index], user_value),
                              (5, 5 + 30 * len(applied_filters)))
                 self.message('Camera read: {:.02f} ms'.format(cam_read_dur_ms),
                              (self.width - 310, 5))
