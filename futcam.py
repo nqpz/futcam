@@ -48,6 +48,9 @@ class FutCam:
 
         # Filters.
         self.filters = collections.OrderedDict([
+            ('nothing',
+             lambda frame, _:
+             self.futhark.do_nothing(frame)),
             ('fisheye',
              lambda frame, user_value:
              self.futhark.fisheye(frame, max(0.1, abs(user_value * 0.05 + 1.2)))),
@@ -124,12 +127,14 @@ class FutCam:
                 w, h = self.scale_to
                 frame = self.futhark.scale_to(frame, w, h)
 
-            # Call Futhark filters.
+            # Call stacked filters.
             time_start = time.time()
             for f, u in zip(applied_filters, user_values[1:] + [user_value]):
                 frame = self.filters[f](frame, u)
-            if not type(frame) is numpy.ndarray:
-                frame = frame.get()
+
+            # Apply the currently selected filter.
+            frame = self.filters[filter_names[filter_index]](frame, user_value).get()
+
             time_end = time.time()
             futhark_dur_ms = (time_end - time_start) * 1000
 
