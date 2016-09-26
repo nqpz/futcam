@@ -220,16 +220,27 @@ entry fake_heatmap(frame : [h][w]pixel) : [h][w]pixel =
                 in set_rgb (r_out, g_out, b_out))
          (iota w))
   (iota h)
+
+fun insane_blur (insaneness : i32) (frame : [h][w]pixel) (xc : i32) (yc : i32) : pixel =
+  let half_insaneness = insaneness / 2
+  let x_start = xc - half_insaneness
+  let y_start = yc - half_insaneness
+  let xs = map (+ x_start) (iota insaneness)
+  let ys = map (+ y_start) (iota insaneness)
+  in pixel_average (
+    map (fn y =>
+           pixel_average (map (fn x =>
+                                 unsafe frame[safe(y, h)][safe(x, w)])
+             xs))
+    ys)
   
-entry hide_low_color(frame : [h][w]pixel, threshold : f32) : [h][w]pixel =
+entry blur_low_color(frame : [h][w]pixel, threshold : f32) : [h][w]pixel =
   map (fn (y : i32) : [w]pixel =>
          map (fn (x : i32) : pixel =>
                 let p = unsafe frame[y][x]
-                let (_h, s, v) = get_hsv p
+                let (_h, s, _v) = get_hsv p
                 let p' = if s < threshold
-                         then if v < 0.5
-                              then set_rgb (0u32, 0u32, 0u32)
-                              else set_rgb (255u32, 255u32, 255u32)
+                         then insane_blur 40 frame x y
                          else p
                 in p')
          (iota w))
