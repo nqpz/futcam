@@ -27,7 +27,10 @@ fun get_hsv (p : pixel) : (f32, f32, f32) =
           else if g >= r && g >= b
           then 120.0f32 + 60.0f32 * (b - r) / (v - mini)
           else 240.0f32 + 60.0f32 * (r - g) / (v - mini)
-  in (h, s, v)
+  let h' = if h < 0.0
+           then h + 360.0
+           else h
+  in (h', s, v)
 
 fun hsv_to_rgb (h : f32, s : f32, v : f32) : (u32, u32, u32) =
   let c = v * s
