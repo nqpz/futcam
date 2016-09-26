@@ -3,6 +3,7 @@ include futcamlib.fisheye
 include futcamlib.warhol
 include futcamlib.whirl
 include futcamlib.greyscale
+include futcamlib.edgy
 include futcamlib.misc
 include futcamlib.scale
 include futcamlib.base
