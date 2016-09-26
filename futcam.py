@@ -72,6 +72,9 @@ class FutCam:
             ('invert rgb',
              lambda frame, _:
              self.futhark.invert_rgb(frame)),
+            ('balance white',
+             lambda frame, user_value:
+             self.futhark.balance_white(frame, user_value * 0.1)),
             ('dim sides',
              lambda frame, user_value:
              self.futhark.dim_sides(frame, max(abs(user_value) * 0.1, 0.1))),
