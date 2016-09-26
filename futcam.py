@@ -63,6 +63,9 @@ class FutCam:
             ('quad',
              lambda frame, _:
              self.futhark.quad(frame)),
+            ('edgy',
+             lambda frame, user_value:
+             self.futhark.edgy(frame, user_value * 0.1)),
             ('greyscale',
              lambda frame, user_value:
              self.futhark.greyscale(frame, user_value * 0.1)),
