@@ -75,6 +75,12 @@ class FutCam:
             ('hue focus',
              lambda frame, user_value:
              self.futhark.hue_focus(frame, user_value * 10.0)),
+            ('value focus',
+             lambda frame, user_value:
+             self.futhark.value_focus(frame, user_value * 0.1)),
+            ('saturation focus',
+             lambda frame, user_value:
+             self.futhark.saturation_focus(frame, user_value * 0.1)),
             ('merge colors',
              lambda frame, user_value:
              self.futhark.merge_colors(frame, 1.0 + user_value * 5.0)),
@@ -87,6 +93,15 @@ class FutCam:
             ('a mystery',
              lambda frame, _:
              self.futhark.mystery(frame)),
+            ('simple blur',
+             lambda frame, user_value:
+             self.futhark.simple_blur(frame, int(user_value))),
+            ('fake heatmap',
+             lambda frame, _:
+             self.futhark.fake_heatmap(frame)),
+            ('hide low color',
+             lambda frame, user_value:
+             self.futhark.hide_low_color(frame, min(1.0, max(0.01, user_value * 0.1)))),
         ])
 
         return self.loop()

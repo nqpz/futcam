@@ -55,6 +55,35 @@ entry hue_focus(frame : [h][w]pixel, hue_focus : f32) : [h][w]pixel =
          row)
   frame
 
+fun closeness_value(v0 : f32, v1 : f32) : f32 =
+  absf (v1 - v0)
+  
+entry value_focus(frame : [h][w]pixel, value_focus : f32) : [h][w]pixel =
+  map (fn (row : [w]pixel) : [w]pixel =>
+         map (fn (p : pixel) : pixel =>
+                let (_h, _s, v) = get_hsv p
+                let c = closeness_value (v, value_focus)
+                let h' = 0.0
+                let s' = 0.0
+                let v' = c
+                let (r, g, b) = hsv_to_rgb(h', s', v')
+                in set_rgb (r, g, b))
+         row)
+  frame
+
+entry saturation_focus(frame : [h][w]pixel, value_focus : f32) : [h][w]pixel =
+  map (fn (row : [w]pixel) : [w]pixel =>
+         map (fn (p : pixel) : pixel =>
+                let (_h, s, _v) = get_hsv p
+                let c = closeness_value (s, value_focus)
+                let h' = 0.0
+                let s' = 0.0
+                let v' = c
+                let (r, g, b) = hsv_to_rgb(h', s', v')
+                in set_rgb (r, g, b))
+         row)
+  frame
+
 entry merge_colors(frame : [h][w]pixel, group_size : f32) : [h][w]pixel =
   map (fn (row : [w]pixel) : [w]pixel =>
          map (fn (p : pixel) : pixel =>
@@ -127,10 +156,12 @@ entry median_filter(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
 
 fun pixel_average (pixels : [n]u32) : u32 =
   let rgbs = map get_rgb pixels
-  let (r0, g0, b0) = reduce (fn (a0, b0, c0) (a1, b1, c1) => (a0 + a1, b0 + b1, c0 + c1)) (0u32, 0u32, 0u32) rgbs
+  let (r0, g0, b0) = reduce (fn (a0, b0, c0) (a1, b1, c1) =>
+                               (a0 + a1, b0 + b1, c0 + c1)) (0u32, 0u32, 0u32)
+                            rgbs
   in set_rgb (r0 / u32 n, g0 / u32 n, b0 / u32 n)
 
-entry slow_blur(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
+entry simple_blur(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
   loop (frame) = for _i < iterations do
     map (fn (y : i32) : [w]pixel =>
            map (fn (x : i32) : pixel =>
@@ -148,6 +179,61 @@ entry slow_blur(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
            (iota w))
     (iota h)
   in frame
+
+fun hsv_distance (p0 : pixel) (p1 : pixel) : f32 =
+  let (h0, s0, v0) = get_hsv p0
+  let (h1, s1, v1) = get_hsv p1
+  let (h0, h1) = if h0 < h1
+                 then (h0, h1)
+                 else (h1, h0)
+  let h_diff = minf (h1 - h0, h0 + 360.0 - h1)
+  let s_diff = absf (s1 - s0)
+  let v_diff = absf (v1 - v0)
+  in h_diff * s_diff * v_diff
+
+entry fake_heatmap(frame : [h][w]pixel) : [h][w]pixel =
+  map (fn (y : i32) : [w]pixel =>
+         map (fn (x : i32) : pixel =>
+                let cm = unsafe frame[y][x]
+                             
+                let um = unsafe frame[safe(y - 1, h)][x]
+                let ur = unsafe frame[safe(y - 1, h)][safe(x + 1, w)]
+                let cr = unsafe frame[y][safe(x + 1, w)]
+                let lr = unsafe frame[safe(y + 1, h)][safe(x + 1, w)]
+                let lm = unsafe frame[safe(y + 1, h)][x]
+                let ll = unsafe frame[safe(y + 1, h)][safe(x - 1, w)]
+                let cl = unsafe frame[y][safe(x - 1, w)]
+                let ul = unsafe frame[safe(y - 1, h)][safe(x - 1, w)]
+                
+                let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
+                let dist_total = reduce (+) 0.0 (map (hsv_distance cm) neighbors)
+                let dist_max = 180.0 * 8.0
+                let factor_base = dist_total / dist_max
+                let factor_rest = 1.0 - factor_base
+                
+                let (h_in, s_in, v_in) = get_hsv cm
+                let (h_out, s_out, v_out) =
+                  (h_in,
+                   s_in * factor_base + factor_rest,
+                   v_in * factor_base + factor_rest)
+                let (r_out, g_out, b_out) = hsv_to_rgb (h_out, s_out, v_out)
+                in set_rgb (r_out, g_out, b_out))
+         (iota w))
+  (iota h)
+  
+entry hide_low_color(frame : [h][w]pixel, threshold : f32) : [h][w]pixel =
+  map (fn (y : i32) : [w]pixel =>
+         map (fn (x : i32) : pixel =>
+                let p = unsafe frame[y][x]
+                let (_h, s, v) = get_hsv p
+                let p' = if s < threshold
+                         then if v < 0.5
+                              then set_rgb (0u32, 0u32, 0u32)
+                              else set_rgb (255u32, 255u32, 255u32)
+                         else p
+                in p')
+         (iota w))
+  (iota h)
 
 
 -- fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
