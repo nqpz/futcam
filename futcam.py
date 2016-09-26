@@ -102,9 +102,9 @@ class FutCam:
             ('fake heatmap',
              lambda frame, _:
              self.futhark.fake_heatmap(frame)),
-            ('hide low color',
+            ('blur low color',
              lambda frame, user_value:
-             self.futhark.hide_low_color(frame, min(1.0, max(0.01, user_value * 0.1)))),
+             self.futhark.blur_low_color(frame, min(1.0, max(0.01, user_value * 0.1)))),
         ])
 
         return self.loop()
