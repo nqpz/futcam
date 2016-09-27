@@ -36,6 +36,22 @@ entry balance_white(frame : [h][w]pixel, value_target : f32) : [h][w]pixel =
   let frame' = reshape (h, w) pixels'
   in frame'
 
+entry balance_saturation(frame : [h][w]pixel, sat_target : f32) : [h][w]pixel =
+  let len = h * w
+  let pixels = reshape (len) frame
+  let sat_total =
+    reduce (+) 0.0
+    (map (fn (p : pixel) : f32 =>
+            let (_h, s, _v) = get_hsv p
+            in s) pixels)
+  let sat_current = sat_total / f32 len
+  let sat_diff = sat_target - sat_current
+  let pixels' = map (fn (p : pixel) : pixel =>
+                       let (h, s, v) = get_hsv p
+                       in set_rgb (hsv_to_rgb (h, maxf (0.0, minf (1.0, s + sat_diff)), v))) pixels
+  let frame' = reshape (h, w) pixels'
+  in frame'
+
 entry dim_sides(frame : [h][w]pixel, strength : f32) : [h][w]pixel =
   map (fn (row : [w]pixel, y : i32) : [w]pixel =>
          map (fn (pixel : pixel, x : i32) : pixel =>

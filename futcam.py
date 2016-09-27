@@ -75,6 +75,9 @@ class FutCam:
             ('balance white',
              lambda frame, user_value:
              self.futhark.balance_white(frame, user_value * 0.1)),
+            ('balance saturation',
+             lambda frame, user_value:
+             self.futhark.balance_saturation(frame, user_value * 0.1)),
             ('dim sides',
              lambda frame, user_value:
              self.futhark.dim_sides(frame, max(abs(user_value) * 0.1, 0.1))),
