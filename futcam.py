@@ -160,7 +160,7 @@ class FutCam:
             futhark_dur_ms = (time_end - time_start) * 1000
 
             # Mess with the internal representation.
-            frame = numpy.rot90(frame)
+            frame = numpy.transpose(frame)
 
             # Show frame.
             pygame.surfarray.blit_array(self.screen, frame)
