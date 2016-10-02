@@ -54,6 +54,9 @@ class FutCam:
             ('fisheye',
              lambda frame, user_value:
              self.futhark.fisheye(frame, max(0.1, abs(user_value * 0.05 + 1.2)))),
+            ('selective zoom',
+             lambda frame, user_value:
+             self.futhark.selective_zoom(frame, float(user_value))),
             ('warhol',
              lambda frame, _:
              self.futhark.warhol(frame)),

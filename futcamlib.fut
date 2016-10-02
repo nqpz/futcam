@@ -1,3 +1,4 @@
+include futcamlib.selective_zoom
 include futcamlib.mystery
 include futcamlib.fisheye
 include futcamlib.warhol
