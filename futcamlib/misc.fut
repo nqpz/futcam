@@ -278,13 +278,23 @@ entry blur_low_color(frame : [h][w]pixel, threshold : f32) : [h][w]pixel =
          (iota w))
   (iota h)
 
-
--- fun max8 (x: u8) (y: u8): u8 = if x < y then y else x
-
--- entry prefixMax(frame : [h][w]pixel) : [h][w]pixel =
---   map (fn row: [w]pixel =>
---          let rs = row[0:w,0]
---          let gs = row[0:w,1]
---          let bs = row[0:w,2]
---          in transpose ([(scan max8 0u8 rs), (scan max8 0u8 gs), (scan max8 0u8 bs)]))
---    frame
+entry colored_boxes(frame : [h][w]pixel, rect_size : i32) : [h][w]pixel =
+  let w_n = (w / rect_size + signum (w % rect_size)) in
+  zipWith (fn (row : [w]pixel) (y : i32) : [w]pixel =>
+             zipWith (fn (p : pixel) (x : i32) : pixel =>
+                        let x_n = x / rect_size
+                        let y_n = y / rect_size
+                        let t = y_n * w_n + x_n
+                        let (h, s, v) = get_hsv p
+                        let h' = modf (h + f32 t * 20.0, 360.0)
+                        let (s_min, s_max) = if s > 0.5
+                                             then (1.0 - s, s)
+                                             else (s, 1.0 - s)
+                        let (v_min, v_max) = if v > 0.5
+                                             then (1.0 - v, v)
+                                             else (v, 1.0 - v)
+                        let s' = minf(s_max, maxf(s_min, modf (s + f32 t * 0.05, 1.0)))
+                        let v' = minf(v_max, maxf(v_min, modf (v + f32 t * 0.05, 1.0)))
+                        in set_rgb (hsv_to_rgb (h', s', v')))
+                     row (iota w))
+          frame (iota h)

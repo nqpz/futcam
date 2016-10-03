@@ -57,6 +57,9 @@ class FutCam:
             ('selective zoom',
              lambda frame, user_value:
              self.futhark.selective_zoom(frame, float(user_value))),
+            ('colored boxes',
+             lambda frame, user_value:
+             self.futhark.colored_boxes(frame, max(1, user_value))),
             ('warhol',
              lambda frame, _:
              self.futhark.warhol(frame)),
