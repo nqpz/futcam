@@ -12,8 +12,8 @@ fun rotation ((x,y): (int,int)): f32 =
   in atan2_32 y' x'
 
 entry greyscale(frame: [h][w]pixel, distortion: f32): [h][w]pixel =
-  zipWith (fn x: [w]pixel =>
-             map (fn y =>
+  zipWith (\x: [w]pixel ->
+             map (\y ->
                     let p = frame[x,y]
                     in if rotation (x-h/2, y-w/2) < distortion+3.147
                        then desaturate p

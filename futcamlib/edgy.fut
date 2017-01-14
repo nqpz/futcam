@@ -13,8 +13,8 @@ default (f32)
 
   
 entry edgy(frame: [h][w]pixel, distortion: i32): [h][w]pixel =
-    zipWith (fn x: [w]pixel =>
-               map (fn y =>
+    zipWith (\x: [w]pixel ->
+               map (\y ->
                       if (x >= w - 10)
                       then RGB.black
                       else

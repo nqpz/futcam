@@ -27,7 +27,7 @@ fun get_rgb(p : pixel) : (channel, channel, channel) =
 fun set_rgb(r : channel, g : channel, b : channel) : pixel =
   (r << 16u32) | (g << 8u32) | b
 
-struct RGB {
+module RGB {
   val black: pixel   = set_rgb(  0u32,  0u32,  0u32)
   val white: pixel   = set_rgb(255u32,255u32,255u32)
   val red: pixel     = set_rgb(255u32,  0u32,  0u32)

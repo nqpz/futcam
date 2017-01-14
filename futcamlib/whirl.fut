@@ -11,8 +11,8 @@ fun sqIndex (frame: [h][w]pixel) ((x,y): (f32,f32)): pixel =
      else set_rgb(0u32,0u32,0u32)
 
 entry whirl(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
-  map (fn x: [w]pixel =>
-         map (fn y : pixel =>
+  map (\x: [w]pixel ->
+         map (\y : pixel ->
                 let r = sqrt32 (x*x + y*y)
                 let a = distortion-r
                 let c = cos32 a

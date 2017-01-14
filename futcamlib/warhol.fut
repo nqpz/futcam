@@ -30,5 +30,5 @@ entry warhol(frame : [h][w]pixel) : [h][w]pixel =
   in concat urows' lrows'
 
 fun warholColourise(colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
-  map (fn row : [w]pixel => map (selectColour colours) (map intensity row))
+  map (\row : [w]pixel -> map (selectColour colours) (map intensity row))
       frame

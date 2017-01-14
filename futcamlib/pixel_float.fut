@@ -4,12 +4,12 @@ default (f32)
 type pixel_float = (f32, f32, f32)
 
 fun pixel_float(pixel : pixel) : pixel_float =
-  let (r, g, b) = get_rgb(pixel)
+  let (r, g, b) = get_rgb pixel
   in (f32 r, f32 g, f32 b)
 
 fun pixel_unfloat(pixel : pixel_float) : pixel =
   let (r, g, b) = pixel
-  in set_rgb(u32 r, u32 g, u32 b)
+  in set_rgb (u32 r, u32 g, u32 b)
 
 fun pixel_add(a : pixel_float, b : pixel_float) : pixel_float =
   let (r_a, g_a, b_a) = a
@@ -38,30 +38,30 @@ fun pixel_at(frame : [h][w]pixel, x : f32, y: f32) : pixel_float =
   let y_val_0 =
     pixel_add
     (pixel_mult_factor
-      (pixel_float (unsafe frame[y_index_a][x_index_a]), y_effect_a),
+      (pixel_float (unsafe frame[y_index_a, x_index_a]), y_effect_a),
       (pixel_mult_factor
-        (pixel_float (unsafe frame[y_index_b][x_index_a]), y_effect_b)))
+        (pixel_float (unsafe frame[y_index_b, x_index_a]), y_effect_b)))
 
   let y_val_1 =
     pixel_add
     (pixel_mult_factor
-      (pixel_float (unsafe frame[y_index_a][x_index_b]), y_effect_a),
+      (pixel_float (unsafe frame[y_index_a, x_index_b]), y_effect_a),
       (pixel_mult_factor
-        (pixel_float (unsafe frame[y_index_b][x_index_b]), y_effect_b)))
+        (pixel_float (unsafe frame[y_index_b, x_index_b]), y_effect_b)))
 
   let x_val_0 =
     pixel_add
     (pixel_mult_factor
-      (pixel_float (unsafe frame[y_index_a][x_index_a]), x_effect_a),
+      (pixel_float (unsafe frame[y_index_a, x_index_a]), x_effect_a),
       (pixel_mult_factor
-        (pixel_float (unsafe frame[y_index_a][x_index_b]), x_effect_b)))
+        (pixel_float (unsafe frame[y_index_a, x_index_b]), x_effect_b)))
 
   let x_val_1 =
     pixel_add
     (pixel_mult_factor
-      (pixel_float (unsafe frame[y_index_b][x_index_a]), x_effect_a),
+      (pixel_float (unsafe frame[y_index_b, x_index_a]), x_effect_a),
       (pixel_mult_factor
-        (pixel_float (unsafe frame[y_index_b][x_index_b]), x_effect_b)))
+        (pixel_float (unsafe frame[y_index_b, x_index_b]), x_effect_b)))
 
   let y_val = pixel_mult_factor (pixel_add (y_val_0, y_val_1), 0.5f32)
   let x_val = pixel_mult_factor (pixel_add (x_val_0, x_val_1), 0.5f32)
