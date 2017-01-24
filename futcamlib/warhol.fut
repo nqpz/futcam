@@ -2,13 +2,13 @@ include futcamlib.misc
 include futcamlib.base
 default (f32)
 
-fun intensity (p: pixel): int =
+fun intensity (p: pixel): i32 =
   let (r, g, b) = get_rgb(p)
-  in (int r * 2 + int g * 3 + int b) / 6
+  in (i32 r * 2 + i32 g * 3 + i32 b) / 6
 
-fun min (x: int) (y: int): int = if x < y then x else y
+fun min (x: i32) (y: i32): i32 = if x < y then x else y
 
-fun selectColour (colours: [n]pixel) (x: int): pixel =
+fun selectColour (colours: [n]pixel) (x: i32): pixel =
   let range = 256 / n
   in unsafe colours[min (x/range) (n-1)]
 
@@ -30,5 +30,5 @@ entry warhol(frame : [h][w]pixel) : [h][w]pixel =
   in concat urows' lrows'
 
 fun warholColourise(colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
-  map (fn row : [w]pixel => map (selectColour colours) (map intensity row))
+  map (\row : [w]pixel -> map (selectColour colours) (map intensity row))
       frame

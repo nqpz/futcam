@@ -38,30 +38,30 @@ fun pixel_at(frame : [h][w]pixel, x : f32, y: f32) : pixel_float =
   let y_val_0 =
     pixel_add
     (pixel_mult_factor
-      (pixel_float (unsafe frame[y_index_a][x_index_a]), y_effect_a),
+      (pixel_float (unsafe frame[y_index_a,x_index_a]), y_effect_a),
       (pixel_mult_factor
-        (pixel_float (unsafe frame[y_index_b][x_index_a]), y_effect_b)))
+        (pixel_float (unsafe frame[y_index_b,x_index_a]), y_effect_b)))
 
   let y_val_1 =
     pixel_add
     (pixel_mult_factor
-      (pixel_float (unsafe frame[y_index_a][x_index_b]), y_effect_a),
+      (pixel_float (unsafe frame[y_index_a,x_index_b]), y_effect_a),
       (pixel_mult_factor
-        (pixel_float (unsafe frame[y_index_b][x_index_b]), y_effect_b)))
+        (pixel_float (unsafe frame[y_index_b,x_index_b]), y_effect_b)))
 
   let x_val_0 =
     pixel_add
     (pixel_mult_factor
-      (pixel_float (unsafe frame[y_index_a][x_index_a]), x_effect_a),
+      (pixel_float (unsafe frame[y_index_a,x_index_a]), x_effect_a),
       (pixel_mult_factor
-        (pixel_float (unsafe frame[y_index_a][x_index_b]), x_effect_b)))
+        (pixel_float (unsafe frame[y_index_a,x_index_b]), x_effect_b)))
 
   let x_val_1 =
     pixel_add
     (pixel_mult_factor
-      (pixel_float (unsafe frame[y_index_b][x_index_a]), x_effect_a),
+      (pixel_float (unsafe frame[y_index_b,x_index_a]), x_effect_a),
       (pixel_mult_factor
-        (pixel_float (unsafe frame[y_index_b][x_index_b]), x_effect_b)))
+        (pixel_float (unsafe frame[y_index_b,x_index_b]), x_effect_b)))
 
   let y_val = pixel_mult_factor (pixel_add (y_val_0, y_val_1), 0.5f32)
   let x_val = pixel_mult_factor (pixel_add (x_val_0, x_val_1), 0.5f32)

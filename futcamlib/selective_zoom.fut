@@ -34,7 +34,7 @@ fun hue_difference (h0 : f32) (h1 : f32) : f32 =
 entry selective_zoom(frame : *[h][w]pixel, threshold : f32) : [h][w]pixel =
   let n = h * w
   let pixels = reshape (n) frame
-  let mask = map (fn (p : pixel) : bool =>
+  let mask = map (\(p : pixel) : bool ->
                     let (_h, _s, v) = get_hsv p
                     -- let okay = hue_difference h (threshold * 10.0) < 50.0
                     -- let okay = s > threshold / 10.0
