@@ -1,5 +1,5 @@
-include futcamlib.pixel_float
-include futcamlib.base
+import "futcamlib/pixel_float"
+import "futcamlib/base"
 default (f32)
 
 entry fisheye(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =

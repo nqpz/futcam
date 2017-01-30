@@ -1,5 +1,5 @@
-include futcamlib.misc
-include futcamlib.base
+import "futcamlib/misc"
+import "futcamlib/base"
 default (f32)
 
 fun intensity (p: pixel): i32 =

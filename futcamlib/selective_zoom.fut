@@ -1,4 +1,5 @@
-include futcamlib.base
+import "futcamlib/base"
+import "futcamlib/misc"
 default (f32)
 
 type pixel_set_single = (i32, pixel)

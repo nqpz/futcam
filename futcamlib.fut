@@ -1,15 +1,12 @@
-include futlib.numeric
-include futcamlib.base
-include futcamlib.misc
-include futcamlib.color
-include futcamlib.selective_zoom
-include futcamlib.mystery
-include futcamlib.fisheye
-include futcamlib.warhol
-include futcamlib.whirl
-include futcamlib.greyscale
-include futcamlib.edgy
-include futcamlib.scale
+import "futcamlib/color"
+import "futcamlib/selective_zoom"
+import "futcamlib/mystery"
+import "futcamlib/fisheye"
+import "futcamlib/warhol"
+import "futcamlib/whirl"
+import "futcamlib/greyscale"
+import "futcamlib/edgy"
+import "futcamlib/scale"
 default (f32)
 
 -- This shouldn't be necessary, but NumPy's reshape is stupid.

@@ -1,15 +1,18 @@
-include futcamlib.base
+import "futcamlib/base"
+import "futcamlib/misc"
+module W = import "futcamlib/warhol"
+
 default (f32)
 
 fun desaturate (p: pixel): pixel =
-  let v = u32 (intensity p)
+  let v = u32 (W.intensity p)
   in set_rgb(v,v,v)
 
 fun rotation ((x,y): (i32,i32)): f32 =
-  let r = F32.sqrt (f32 (x*x + y*y))
+  let r = f32.sqrt (f32 (x*x + y*y))
   let x' = f32 x / r
   let y' = f32 y / r
-  in F32.atan2 y' x'
+  in f32.atan2 y' x'
 
 entry greyscale(frame: [h][w]pixel, distortion: f32): [h][w]pixel =
   zipWith (\x: [w]pixel ->

@@ -1,4 +1,6 @@
-include futcamlib.base
+import "futlib/numeric"
+import "futcamlib/base"
+import "futcamlib/color"
 default (f32)
 
 entry quad(frame : [h][w]pixel) : [h][w]pixel =
@@ -54,8 +56,8 @@ entry balance_saturation(frame : [h][w]pixel, sat_target : f32) : [h][w]pixel =
 entry dim_sides(frame : [h][w]pixel, strength : f32) : [h][w]pixel =
   map (\(row : [w]pixel, y : i32) : [w]pixel ->
          map (\(pixel : pixel, x : i32) : pixel ->
-                let x_center_closeness = 1.0f32 - f32 (I32.abs (w / 2 - x)) / (f32 (w / 2))
-                let y_center_closeness = 1.0f32 - f32 (I32.abs (h / 2 - y)) / (f32 (h / 2))
+                let x_center_closeness = 1.0f32 - f32 (i32.abs (w / 2 - x)) / (f32 (w / 2))
+                let y_center_closeness = 1.0f32 - f32 (i32.abs (h / 2 - y)) / (f32 (h / 2))
                 let center_closeness = x_center_closeness * y_center_closeness
                 let center_closeness' = center_closeness ** strength
                 let (r, g, b) = get_rgb(pixel)
@@ -279,7 +281,7 @@ entry blur_low_color(frame : [h][w]pixel, threshold : f32) : [h][w]pixel =
 
 entry colored_boxes(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
   let rect_size = i32 distortion
-  let w_n = (w / rect_size + I32.sgn (w % rect_size)) in
+  let w_n = (w / rect_size + i32.sgn (w % rect_size)) in
   zipWith (\(row : [w]pixel) (y : i32) : [w]pixel ->
              zipWith (\(p : pixel) (x : i32) : pixel ->
                         let x_n = x / rect_size

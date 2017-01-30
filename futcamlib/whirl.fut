@@ -1,5 +1,5 @@
-include futlib.numeric
-include futcamlib.base
+import "futlib/numeric"
+import "futcamlib/base"
 default (f32)
 
 fun toSq   (w: i32) (x: i32): f32 = 2.0*f32 x/f32 w - 1.0
@@ -14,10 +14,10 @@ fun sqIndex (frame: [h][w]pixel) ((x,y): (f32,f32)): pixel =
 entry whirl(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
   map (\x: [w]pixel ->
          map (\y : pixel ->
-                let r = F32.sqrt (x*x + y*y)
+                let r = f32.sqrt (x*x + y*y)
                 let a = distortion-r
-                let c = F32.cos a
-                let s = F32.sin a
+                let c = f32.cos a
+                let s = f32.sin a
                 let x' = x*c-y*s
                 let y' = x*s+y*c
                 in sqIndex frame (x',y'))

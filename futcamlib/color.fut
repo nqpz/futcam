@@ -1,4 +1,4 @@
-include futcamlib.base
+import "futcamlib/base"
 default (f32)
 
 fun minf (a : f32, b : f32) : f32 =
