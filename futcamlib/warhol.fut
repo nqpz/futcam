@@ -12,6 +12,10 @@ fun selectColour (colours: [n]pixel) (x: i32): pixel =
   let range = 256 / n
   in unsafe colours[min (x/range) (n-1)]
 
+fun warholColourise(colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
+  map (\row : [w]pixel -> map (selectColour colours) (map intensity row))
+      frame
+
 entry warhol(frame : [h][w]pixel) : [h][w]pixel =
   let frame' = quad frame
   let (urows,lrows) = split (h/2) frame'
@@ -28,7 +32,3 @@ entry warhol(frame : [h][w]pixel) : [h][w]pixel =
   let lrows' = concat@1 ll' lr'
   let urows' = concat@1 ul' ur'
   in concat urows' lrows'
-
-fun warholColourise(colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
-  map (\row : [w]pixel -> map (selectColour colours) (map intensity row))
-      frame

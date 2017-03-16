@@ -143,12 +143,6 @@ entry equalise_saturation(frame : [h][w]pixel) : [h][w]pixel =
 
 fun minu (a : u32) (b : u32) : u32 =
   if a < b then a else b
-  
-fun nth_smallest(xs : [n]u32, nth : i32) : u32 =
-  let smallest = reduce minu xs[0] xs
-  loop (smallest) = for _i < nth do
-    reduce (small_enough smallest) smallest xs
-  in smallest
 
 fun small_enough (threshold : u32) (a : u32) (b : u32) : u32 =
   if a < b
@@ -158,6 +152,12 @@ fun small_enough (threshold : u32) (a : u32) (b : u32) : u32 =
   else if b <= threshold
   then a
   else b
+
+fun nth_smallest(xs : [n]u32, nth : i32) : u32 =
+  let smallest = reduce minu xs[0] xs
+  loop (smallest) = for _i < nth do
+    reduce (small_enough smallest) smallest xs
+  in smallest
 
 fun median(xs : [n]u32) : u32 = nth_smallest(xs, n / 2)
 
