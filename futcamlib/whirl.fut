@@ -2,9 +2,9 @@ import "futlib/math"
 import "futcamlib/base"
 default (f32)
 
-fun toSq   (w: i32) (x: i32): f32 = 2.0*f32 x/f32 w - 1.0
-fun fromSq (w: i32) (x: f32): i32 = i32 ((x+1.0)*f32 w/2.0)
-fun sqIndex (frame: [h][w]pixel) ((x,y): (f32,f32)): pixel =
+let toSq   (w: i32) (x: i32): f32 = 2.0*f32 x/f32 w - 1.0
+let fromSq (w: i32) (x: f32): i32 = i32 ((x+1.0)*f32 w/2.0)
+let sqIndex (frame: [h][w]pixel) ((x,y): (f32,f32)): pixel =
   let x' = fromSq h x
   let y' = fromSq w y
   in if x' >= 0 && x' < h && y' >= 0 && y' < w

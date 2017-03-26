@@ -2,17 +2,17 @@ import "futcamlib/misc"
 import "futcamlib/base"
 default (f32)
 
-fun intensity (p: pixel): i32 =
+let intensity (p: pixel): i32 =
   let (r, g, b) = get_rgb(p)
   in (i32 r * 2 + i32 g * 3 + i32 b) / 6
 
-fun min (x: i32) (y: i32): i32 = if x < y then x else y
+let min (x: i32) (y: i32): i32 = if x < y then x else y
 
-fun selectColour (colours: [n]pixel) (x: i32): pixel =
+let selectColour (colours: [n]pixel) (x: i32): pixel =
   let range = 256 / n
   in unsafe colours[min (x/range) (n-1)]
 
-fun warholColourise(colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
+let warholColourise(colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
   map (\row : [w]pixel -> map (selectColour colours) (map intensity row))
       frame
 

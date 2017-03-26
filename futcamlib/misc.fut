@@ -68,7 +68,7 @@ entry dim_sides(frame : [h][w]pixel, strength : f32) : [h][w]pixel =
          (zip row (iota w)))
   (zip frame (iota h))
 
-fun closeness_hue(h0 : f32, h1 : f32) : f32 =
+let closeness_hue(h0 : f32, h1 : f32) : f32 =
   let (h0, h1) = if h1 < h0 then (h1, h0) else (h0, h1)
   let linear = 1.0 - minf (h1 - h0, h0 + 360.0 - h1) / (360.0 / 2.0)
   let force = 3.3
@@ -88,7 +88,7 @@ entry hue_focus(frame : [h][w]pixel, hue_focus : f32) : [h][w]pixel =
          row)
   frame
 
-fun closeness_value(v0 : f32, v1 : f32) : f32 =
+let closeness_value(v0 : f32, v1 : f32) : f32 =
   absf (v1 - v0)
   
 entry value_focus(frame : [h][w]pixel, value_focus : f32) : [h][w]pixel =
@@ -141,10 +141,10 @@ entry equalise_saturation(frame : [h][w]pixel) : [h][w]pixel =
          row)
   frame
 
-fun minu (a : u32) (b : u32) : u32 =
+let minu (a : u32) (b : u32) : u32 =
   if a < b then a else b
 
-fun small_enough (threshold : u32) (a : u32) (b : u32) : u32 =
+let small_enough (threshold : u32) (a : u32) (b : u32) : u32 =
   if a < b
   then if a <= threshold
        then b
@@ -153,15 +153,15 @@ fun small_enough (threshold : u32) (a : u32) (b : u32) : u32 =
   then a
   else b
 
-fun nth_smallest(xs : [n]u32, nth : i32) : u32 =
+let nth_smallest(xs : [n]u32, nth : i32) : u32 =
   let smallest = reduce minu xs[0] xs
   loop (smallest) = for _i < nth do
     reduce (small_enough smallest) smallest xs
   in smallest
 
-fun median(xs : [n]u32) : u32 = nth_smallest(xs, n / 2)
+let median(xs : [n]u32) : u32 = nth_smallest(xs, n / 2)
 
-fun safe(x : i32, m : i32) : i32 =
+let safe(x : i32, m : i32) : i32 =
   if x < 0
   then 0
   else if x > m - 1
@@ -187,7 +187,7 @@ entry median_filter(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
     (iota h)
   in frame
 
-fun pixel_average (pixels : [n]u32) : u32 =
+let pixel_average (pixels : [n]u32) : u32 =
   let rgbs = map get_rgb pixels
   let (r0, g0, b0) = reduce (\(a0, b0, c0) (a1, b1, c1) ->
                                (a0 + a1, b0 + b1, c0 + c1)) (0u32, 0u32, 0u32)
@@ -213,7 +213,7 @@ entry simple_blur(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
     (iota h)
   in frame
 
-fun hsv_distance (p0 : pixel) (p1 : pixel) : f32 =
+let hsv_distance (p0 : pixel) (p1 : pixel) : f32 =
   let (h0, s0, v0) = get_hsv p0
   let (h1, s1, v1) = get_hsv p1
   let (h0, h1) = if h0 < h1
@@ -254,7 +254,7 @@ entry fake_heatmap(frame : [h][w]pixel) : [h][w]pixel =
          (iota w))
   (iota h)
 
-fun insane_blur (insaneness : i32) (frame : [h][w]pixel) (xc : i32) (yc : i32) : pixel =
+let insane_blur (insaneness : i32) (frame : [h][w]pixel) (xc : i32) (yc : i32) : pixel =
   let half_insaneness = insaneness / 2
   let x_start = xc - half_insaneness
   let y_start = yc - half_insaneness

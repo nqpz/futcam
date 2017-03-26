@@ -3,11 +3,11 @@ import "futcamlib/base"
 
 default (f32)
 
--- fun desaturateE (p: pixel): pixel =
+-- let desaturateE (p: pixel): pixel =
 --   let v = u32 (intensity p)
 --   in set_rgb(v,v,v)
 
--- fun rotationE ((x,y): (i32,i32)): f32 =
+-- let rotationE ((x,y): (i32,i32)): f32 =
 --   let r = sqrt32 (f32 (x*x + y*y))
 --   let x' = f32 x / r
 --   let y' = f32 y / r

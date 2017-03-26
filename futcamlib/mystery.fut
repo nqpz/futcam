@@ -1,11 +1,11 @@
 import "futcamlib/base"
 
-fun max32 (x: u32) (y: u32): u32 = if x < y then y else x
+let max32 (x: u32) (y: u32): u32 = if x < y then y else x
 
-fun indexOfMax32 ((x,i): (u32,i32)) ((y,j): (u32,i32)): (u32,i32) =
+let indexOfMax32 ((x,i): (u32,i32)) ((y,j): (u32,i32)): (u32,i32) =
   if x < y then (y,j) else (x,i)
 
-fun beforeMax ((max_v, max_i): (u32, i32)) ((v,i): (u32, i32)): u32 =
+let beforeMax ((max_v, max_i): (u32, i32)) ((v,i): (u32, i32)): u32 =
   if i < max_i then v else max_v
 
 entry mystery(frame : [h][w]pixel) : [h][w]pixel =

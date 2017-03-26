@@ -5,12 +5,12 @@ default (f32)
 type pixel_set_single = (i32, pixel)
 type pixel_set = [4]pixel_set_single
 
-fun to_index (h : i32) (w : i32) (y : i32) (x : i32) : i32 =
+let to_index (h : i32) (w : i32) (y : i32) (x : i32) : i32 =
   if y < 0 || y >= h || x < 0 || x >= w
   then -1
   else y * w + x
 
-fun selective_zoom_pixel (h : i32) (w : i32)
+let selective_zoom_pixel (h : i32) (w : i32)
   (index : i32) (p : pixel) (m : bool) : pixel_set =
   if m then let y = index / w
             let x = index % w
@@ -28,7 +28,7 @@ fun selective_zoom_pixel (h : i32) (w : i32)
             in zip indices (replicate 4 p)
   else replicate 4 (-1, 0u32)
 
-fun hue_difference (h0 : f32) (h1 : f32) : f32 =
+let hue_difference (h0 : f32) (h1 : f32) : f32 =
   let (h0, h1) = if h1 < h0 then (h1, h0) else (h0, h1)
   in minf (h1 - h0, h0 + 360.0 - h1)
 

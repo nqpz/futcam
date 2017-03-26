@@ -3,28 +3,28 @@ default (f32)
 type pixel = u32
 type channel = u32 -- This should only be 0..255, but u32 is fine.
 
-fun get_r(p : pixel) : channel =
+let get_r(p : pixel) : channel =
   (p >> 16u32) & 255u32
 
-fun set_r(p : pixel, c : channel) : pixel =
+let set_r(p : pixel, c : channel) : pixel =
   (p | (255u32 << 16u32)) & (c << 16u32)
 
-fun get_g(p : pixel) : channel =
+let get_g(p : pixel) : channel =
   (p >> 8u32) & 255u32
 
-fun set_g(p : pixel, c : channel) : pixel =
+let set_g(p : pixel, c : channel) : pixel =
   (p | (255u32 << 8u32)) & (c << 8u32)
 
-fun get_b(p : pixel) : channel =
+let get_b(p : pixel) : channel =
   p & 255u32
 
-fun set_b(p : pixel, c : channel) : pixel =
+let set_b(p : pixel, c : channel) : pixel =
   (p | 255u32) & c
 
-fun get_rgb(p : pixel) : (channel, channel, channel) =
+let get_rgb(p : pixel) : (channel, channel, channel) =
   (get_r p, get_g p, get_b p)
 
-fun set_rgb(r : channel, g : channel, b : channel) : pixel =
+let set_rgb(r : channel, g : channel, b : channel) : pixel =
   (r << 16u32) | (g << 8u32) | b
 
 module RGB = {

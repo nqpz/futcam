@@ -4,11 +4,11 @@ module W = import "futcamlib/warhol"
 
 default (f32)
 
-fun desaturate (p: pixel): pixel =
+let desaturate (p: pixel): pixel =
   let v = u32 (W.intensity p)
   in set_rgb(v,v,v)
 
-fun rotation ((x,y): (i32,i32)): f32 =
+let rotation ((x,y): (i32,i32)): f32 =
   let r = f32.sqrt (f32 (x*x + y*y))
   let x' = f32 x / r
   let y' = f32 y / r

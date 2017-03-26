@@ -1,19 +1,19 @@
 import "futcamlib/base"
 default (f32)
 
-fun minf (a : f32, b : f32) : f32 =
+let minf (a : f32, b : f32) : f32 =
   if a < b then a else b
 
-fun maxf (a : f32, b : f32) : f32 =
+let maxf (a : f32, b : f32) : f32 =
   if a > b then a else b
 
-fun absf (a : f32) : f32 =
+let absf (a : f32) : f32 =
   if a < 0.0 then -a else a
 
-fun modf (a : f32, m : f32) : f32 =
+let modf (a : f32, m : f32) : f32 =
   a - f32 (i32 (a / m)) * m
   
-fun get_hsv (p : pixel) : (f32, f32, f32) =
+let get_hsv (p : pixel) : (f32, f32, f32) =
   let (r0, g0, b0) = get_rgb p
   let (r, g, b) = (f32 r0 / 255.0, f32 g0 / 255.0, f32 b0 / 255.0)
   let mini = minf (minf (r, g), b)
@@ -32,7 +32,7 @@ fun get_hsv (p : pixel) : (f32, f32, f32) =
            else h
   in (h', s, v)
 
-fun hsv_to_rgb (h : f32, s : f32, v : f32) : (u32, u32, u32) =
+let hsv_to_rgb (h : f32, s : f32, v : f32) : (u32, u32, u32) =
   let c = v * s
   let h' = h / 60.0
   let x = c * (1.0 - absf (modf (h', 2.0) - 1.0))
