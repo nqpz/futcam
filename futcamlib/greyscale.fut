@@ -14,8 +14,8 @@ let rotation ((x,y): (i32,i32)): f32 =
   let y' = f32 y / r
   in f32.atan2 y' x'
 
-entry greyscale(frame: [h][w]pixel, distortion: f32): [h][w]pixel =
-  zipWith (\x: [w]pixel ->
+entry greyscale(frame: [#h][#w]pixel, distortion: f32): [h][w]pixel =
+  map (\x: [w]pixel ->
              map (\y ->
                     let p = frame[x,y]
                     in if rotation (x-h/2, y-w/2) < distortion+3.147

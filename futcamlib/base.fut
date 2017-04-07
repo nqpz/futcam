@@ -28,15 +28,15 @@ let set_rgb(r : channel, g : channel, b : channel) : pixel =
   (r << 16u32) | (g << 8u32) | b
 
 module RGB = {
-  val black: pixel   = set_rgb(  0u32,  0u32,  0u32)
-  val white: pixel   = set_rgb(255u32,255u32,255u32)
-  val red: pixel     = set_rgb(255u32,  0u32,  0u32)
-  val green: pixel   = set_rgb(  0u32,  255u32,0u32)
-  val blue: pixel    = set_rgb(  0u32,  0u32,255u32)
-  val yellow: pixel  = set_rgb(255u32,255u32,  0u32)
-  val cyan: pixel    = set_rgb(  0u32,255u32,255u32)
-  val magenta: pixel = set_rgb(255u32,  0u32,255u32)
-  val orange: pixel  = set_rgb(255u32,165u32,  0u32)
-  val pink: pixel    = set_rgb(255u32,192u32,203u32)
-  val purple: pixel  = set_rgb(128u32,  0u32,128u32)
+  let black: pixel   = set_rgb(  0u32,  0u32,  0u32)
+  let white: pixel   = set_rgb(255u32,255u32,255u32)
+  let red: pixel     = set_rgb(255u32,  0u32,  0u32)
+  let green: pixel   = set_rgb(  0u32,  255u32,0u32)
+  let blue: pixel    = set_rgb(  0u32,  0u32,255u32)
+  let yellow: pixel  = set_rgb(255u32,255u32,  0u32)
+  let cyan: pixel    = set_rgb(  0u32,255u32,255u32)
+  let magenta: pixel = set_rgb(255u32,  0u32,255u32)
+  let orange: pixel  = set_rgb(255u32,165u32,  0u32)
+  let pink: pixel    = set_rgb(255u32,192u32,203u32)
+  let purple: pixel  = set_rgb(128u32,  0u32,128u32)
 }

@@ -20,7 +20,7 @@ let pixel_mult_factor(p : pixel_float, f : f32) : pixel_float =
   let (r, g, b) = p
   in (r * f, g * f, b * f)
 
-let pixel_at(frame : [h][w]pixel, x : f32, y: f32) : pixel_float =
+let pixel_at(frame : [#h][#w]pixel, x : f32, y: f32) : pixel_float =
   let y_effect_b = y - f32 (i32 y)
   let y_effect_a = 1.0f32 - y_effect_b
   let y_index_a = i32 y

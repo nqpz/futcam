@@ -14,8 +14,8 @@ default (f32)
 --   in atan2_32 y' x'
 
   
-entry edgy(frame: [h][w]pixel, distortion: f32): [h][w]pixel =
-    zipWith (\x: [w]pixel ->
+entry edgy(frame: [#h][#w]pixel, distortion: f32): [h][w]pixel =
+    map (\x: [w]pixel ->
                map (\y ->
                       if (x >= w - 10)
                       then RGB.black

@@ -32,7 +32,7 @@ let hue_difference (h0 : f32) (h1 : f32) : f32 =
   let (h0, h1) = if h1 < h0 then (h1, h0) else (h0, h1)
   in minf (h1 - h0, h0 + 360.0 - h1)
 
-entry selective_zoom(frame : *[h][w]pixel, threshold : f32) : [h][w]pixel =
+entry selective_zoom(frame : *[#h][#w]pixel, threshold : f32) : [h][w]pixel =
   let n = h * w
   let pixels = reshape (n) frame
   let mask = map (\(p : pixel) : bool ->
@@ -42,8 +42,8 @@ entry selective_zoom(frame : *[h][w]pixel, threshold : f32) : [h][w]pixel =
                     let okay = v > threshold / 10.0
                     in okay)
                  pixels
-  let pixel_sets = zipWith (selective_zoom_pixel h w) (iota n) pixels mask
+  let pixel_sets = map (selective_zoom_pixel h w) (iota n) pixels mask
   let (indices, pixel_writes) = unzip (reshape (n * 4) pixel_sets)
-  let pixels' = write indices pixel_writes pixels
+  let pixels' = scatter pixels indices pixel_writes
   let pixels'' = reshape (h, w) pixels'
   in pixels''

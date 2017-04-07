@@ -3,14 +3,14 @@ import "futcamlib/base"
 import "futcamlib/color"
 default (f32)
 
-entry quad(frame : [h][w]pixel) : [h][w]pixel =
+entry quad(frame : [#h][#w]pixel) : [h][w]pixel =
   let n = 2
   in map (\y: [w]pixel ->
             map (\x : pixel -> unsafe frame[y%(h/n)*n,x%(w/n)*n])
                 (iota w))
          (iota h)
 
-entry invert_rgb(frame : [h][w]pixel) : [h][w]pixel =
+entry invert_rgb(frame : [#h][#w]pixel) : [h][w]pixel =
   map (\(row : [w]pixel) : [w]pixel ->
          map (\(p : pixel) : pixel ->
                 let (r, g, b) = get_rgb p
@@ -21,7 +21,7 @@ entry invert_rgb(frame : [h][w]pixel) : [h][w]pixel =
          row)
   frame
 
-entry balance_white(frame : [h][w]pixel, value_target : f32) : [h][w]pixel =
+entry balance_white(frame : [#h][#w]pixel, value_target : f32) : [h][w]pixel =
   let len = h * w
   let pixels = reshape (len) frame
   let value_total =
@@ -37,7 +37,7 @@ entry balance_white(frame : [h][w]pixel, value_target : f32) : [h][w]pixel =
   let frame' = reshape (h, w) pixels'
   in frame'
 
-entry balance_saturation(frame : [h][w]pixel, sat_target : f32) : [h][w]pixel =
+entry balance_saturation(frame : [#h][#w]pixel, sat_target : f32) : [h][w]pixel =
   let len = h * w
   let pixels = reshape (len) frame
   let sat_total =
@@ -53,7 +53,7 @@ entry balance_saturation(frame : [h][w]pixel, sat_target : f32) : [h][w]pixel =
   let frame' = reshape (h, w) pixels'
   in frame'
 
-entry dim_sides(frame : [h][w]pixel, strength : f32) : [h][w]pixel =
+entry dim_sides(frame : [#h][#w]pixel, strength : f32) : [h][w]pixel =
   map (\(row : [w]pixel, y : i32) : [w]pixel ->
          map (\(pixel : pixel, x : i32) : pixel ->
                 let x_center_closeness = 1.0f32 - f32 (i32.abs (w / 2 - x)) / (f32 (w / 2))
@@ -74,7 +74,7 @@ let closeness_hue(h0 : f32, h1 : f32) : f32 =
   let force = 3.3
   in linear ** force
   
-entry hue_focus(frame : [h][w]pixel, hue_focus : f32) : [h][w]pixel =
+entry hue_focus(frame : [#h][#w]pixel, hue_focus : f32) : [h][w]pixel =
   let hue_focus = modf(modf (hue_focus, 360.0) + 360.0, 360.0) in
   map (\(row : [w]pixel) : [w]pixel ->
          map (\(p : pixel) : pixel ->
@@ -91,7 +91,7 @@ entry hue_focus(frame : [h][w]pixel, hue_focus : f32) : [h][w]pixel =
 let closeness_value(v0 : f32, v1 : f32) : f32 =
   absf (v1 - v0)
   
-entry value_focus(frame : [h][w]pixel, value_focus : f32) : [h][w]pixel =
+entry value_focus(frame : [#h][#w]pixel, value_focus : f32) : [h][w]pixel =
   map (\(row : [w]pixel) : [w]pixel ->
          map (\(p : pixel) : pixel ->
                 let (_h, _s, v) = get_hsv p
@@ -104,7 +104,7 @@ entry value_focus(frame : [h][w]pixel, value_focus : f32) : [h][w]pixel =
          row)
   frame
 
-entry saturation_focus(frame : [h][w]pixel, value_focus : f32) : [h][w]pixel =
+entry saturation_focus(frame : [#h][#w]pixel, value_focus : f32) : [h][w]pixel =
   map (\(row : [w]pixel) : [w]pixel ->
          map (\(p : pixel) : pixel ->
                 let (_h, s, _v) = get_hsv p
@@ -117,7 +117,7 @@ entry saturation_focus(frame : [h][w]pixel, value_focus : f32) : [h][w]pixel =
          row)
   frame
 
-entry merge_colors(frame : [h][w]pixel, group_size : f32) : [h][w]pixel =
+entry merge_colors(frame : [#h][#w]pixel, group_size : f32) : [h][w]pixel =
   map (\(row : [w]pixel) : [w]pixel ->
          map (\(p : pixel) : pixel ->
                 let (h, s, v) = get_hsv p
@@ -129,7 +129,7 @@ entry merge_colors(frame : [h][w]pixel, group_size : f32) : [h][w]pixel =
          row)
   frame
 
-entry equalise_saturation(frame : [h][w]pixel) : [h][w]pixel =
+entry equalise_saturation(frame : [#h][#w]pixel) : [h][w]pixel =
   map (\(row : [w]pixel) : [w]pixel ->
          map (\(p : pixel) : pixel ->
                 let (h, _s, v) = get_hsv p
@@ -153,13 +153,13 @@ let small_enough (threshold : u32) (a : u32) (b : u32) : u32 =
   then a
   else b
 
-let nth_smallest(xs : [n]u32, nth : i32) : u32 =
+let nth_smallest(xs : [#n]u32, nth : i32) : u32 =
   let smallest = reduce minu xs[0] xs
   loop (smallest) = for _i < nth do
     reduce (small_enough smallest) smallest xs
   in smallest
 
-let median(xs : [n]u32) : u32 = nth_smallest(xs, n / 2)
+let median(xs : [#n]u32) : u32 = nth_smallest(xs, n / 2)
 
 let safe(x : i32, m : i32) : i32 =
   if x < 0
@@ -168,7 +168,7 @@ let safe(x : i32, m : i32) : i32 =
   then m - 1
   else x
   
-entry median_filter(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
+entry median_filter(frame : [#h][#w]pixel, iterations : i32) : [h][w]pixel =
   loop (frame) = for _i < iterations do
     map (\(y : i32) : [w]pixel ->
            map (\(x : i32) : pixel ->
@@ -187,14 +187,14 @@ entry median_filter(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
     (iota h)
   in frame
 
-let pixel_average (pixels : [n]u32) : u32 =
+let pixel_average (pixels : [#n]u32) : u32 =
   let rgbs = map get_rgb pixels
   let (r0, g0, b0) = reduce (\(a0, b0, c0) (a1, b1, c1) ->
                                (a0 + a1, b0 + b1, c0 + c1)) (0u32, 0u32, 0u32)
                             rgbs
   in set_rgb (r0 / u32 n, g0 / u32 n, b0 / u32 n)
 
-entry simple_blur(frame : [h][w]pixel, iterations : i32) : [h][w]pixel =
+entry simple_blur(frame : [#h][#w]pixel, iterations : i32) : [h][w]pixel =
   loop (frame) = for _i < iterations do
     map (\(y : i32) : [w]pixel ->
            map (\(x : i32) : pixel ->
@@ -224,7 +224,7 @@ let hsv_distance (p0 : pixel) (p1 : pixel) : f32 =
   let v_diff = absf (v1 - v0)
   in h_diff * s_diff * v_diff
 
-entry fake_heatmap(frame : [h][w]pixel) : [h][w]pixel =
+entry fake_heatmap(frame : [#h][#w]pixel) : [h][w]pixel =
   map (\(y : i32) : [w]pixel ->
          map (\(x : i32) : pixel ->
                 let cm = unsafe frame[y, x]
@@ -254,7 +254,7 @@ entry fake_heatmap(frame : [h][w]pixel) : [h][w]pixel =
          (iota w))
   (iota h)
 
-let insane_blur (insaneness : i32) (frame : [h][w]pixel) (xc : i32) (yc : i32) : pixel =
+let insane_blur (insaneness : i32) (frame : [#h][#w]pixel) (xc : i32) (yc : i32) : pixel =
   let half_insaneness = insaneness / 2
   let x_start = xc - half_insaneness
   let y_start = yc - half_insaneness
@@ -267,7 +267,7 @@ let insane_blur (insaneness : i32) (frame : [h][w]pixel) (xc : i32) (yc : i32) :
              xs))
     ys)
   
-entry blur_low_color(frame : [h][w]pixel, threshold : f32) : [h][w]pixel =
+entry blur_low_color(frame : [#h][#w]pixel, threshold : f32) : [h][w]pixel =
   map (\(y : i32) : [w]pixel ->
          map (\(x : i32) : pixel ->
                 let p = unsafe frame[y,x]
@@ -279,11 +279,11 @@ entry blur_low_color(frame : [h][w]pixel, threshold : f32) : [h][w]pixel =
          (iota w))
   (iota h)
 
-entry colored_boxes(frame : [h][w]pixel, distortion : f32) : [h][w]pixel =
+entry colored_boxes(frame : [#h][#w]pixel, distortion : f32) : [h][w]pixel =
   let rect_size = i32 distortion
   let w_n = (w / rect_size + i32.sgn (w % rect_size)) in
-  zipWith (\(row : [w]pixel) (y : i32) : [w]pixel ->
-             zipWith (\(p : pixel) (x : i32) : pixel ->
+  map (\(row : [w]pixel) (y : i32) : [w]pixel ->
+             map (\(p : pixel) (x : i32) : pixel ->
                         let x_n = x / rect_size
                         let y_n = y / rect_size
                         let t = y_n * w_n + x_n
