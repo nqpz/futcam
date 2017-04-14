@@ -237,7 +237,13 @@ def main(args):
     def size(s):
         return tuple(map(int, s.split('x')))
 
-    arg_parser = argparse.ArgumentParser()
+    description='''
+Use up and down arrow keys to navigate the filters.  Use left and right arrow
+keys to adjust a special variable sent to some of the filters.  Press Enter to
+activate a filter.  Press backspace to deactivate it.  Press `h` to toggle the
+HUD.  Press `q` to exit.
+'''
+    arg_parser = argparse.ArgumentParser(description=description)
     arg_parser.add_argument('--resolution', type=size, metavar='WIDTHxHEIGHT',
                             help='set the resolution of the webcam instead of relying on its default resolution')
     arg_parser.add_argument('--scale-to', type=size, metavar='WIDTHxHEIGHT',

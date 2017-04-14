@@ -3,7 +3,7 @@
 Run Futhark code on a live webcam feed!
 
 Run `make` to build the library, and then run `./futcam.py` to run the
-program.
+program.  Run `./futcam.py --help` to see which settings exist.
 
 Futhark: http://futhark-lang.org/ and
 https://github.com/HIPERFIT/futhark
