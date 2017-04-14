@@ -6,4 +6,5 @@ futcamlib.py: futcamlib.fut futcamlib/*.fut
 	futhark-pyopencl --library futcamlib.fut
 
 clean:
-	rm -f futcamlib.py
+	rm -f futcamlib.py futcamlib.pyc
+	rm -rf __pycache__
