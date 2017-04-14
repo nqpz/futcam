@@ -9,11 +9,11 @@ let sqIndex (frame: [#h][#w]pixel) ((x,y): (f32,f32)): pixel =
   let y' = fromSq w y
   in if x' >= 0 && x' < h && y' >= 0 && y' < w
      then unsafe frame[x', y']
-     else set_rgb(0u32,0u32,0u32)
+     else RGB.black
 
-entry whirl(frame : [#h][#w]pixel, distortion : f32) : [h][w]pixel =
+entry whirl (frame: [#h][#w]pixel, distortion: f32): [h][w]pixel =
   map (\x: [w]pixel ->
-         map (\y : pixel ->
+         map (\y: pixel ->
                 let r = f32.sqrt (x*x + y*y)
                 let a = distortion-r
                 let c = f32.cos a

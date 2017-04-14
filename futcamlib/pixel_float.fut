@@ -3,24 +3,24 @@ default (f32)
 
 type pixel_float = (f32, f32, f32)
 
-let pixel_float(pixel : pixel) : pixel_float =
+let pixel_float (pixel: pixel): pixel_float =
   let (r, g, b) = get_rgb(pixel)
   in (f32 r, f32 g, f32 b)
 
-let pixel_unfloat(pixel : pixel_float) : pixel =
+let pixel_unfloat (pixel: pixel_float): pixel =
   let (r, g, b) = pixel
-  in set_rgb(u32 r, u32 g, u32 b)
+  in set_rgb (u32 r) (u32 g) (u32 b)
 
-let pixel_add(a : pixel_float, b : pixel_float) : pixel_float =
+let pixel_add (a: pixel_float, b: pixel_float): pixel_float =
   let (r_a, g_a, b_a) = a
   let (r_b, g_b, b_b) = b
   in (r_a + r_b, g_a + g_b, b_a + b_b)
 
-let pixel_mult_factor(p : pixel_float, f : f32) : pixel_float =
+let pixel_mult_factor (p: pixel_float, f: f32): pixel_float =
   let (r, g, b) = p
   in (r * f, g * f, b * f)
 
-let pixel_at(frame : [#h][#w]pixel, x : f32, y: f32) : pixel_float =
+let pixel_at (frame: [#h][#w]pixel, x: f32, y: f32): pixel_float =
   let y_effect_b = y - f32 (i32 y)
   let y_effect_a = 1.0f32 - y_effect_b
   let y_index_a = i32 y

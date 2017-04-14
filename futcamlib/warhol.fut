@@ -12,11 +12,11 @@ let selectColour (colours: [#n]pixel) (x: i32): pixel =
   let range = 256 / n
   in unsafe colours[min (x/range) (n-1)]
 
-let warholColourise(colours: [#n]pixel) (frame: [#h][#w]pixel): [h][w]pixel =
-  map (\row : [w]pixel -> map (selectColour colours) (map intensity row))
+let warholColourise (colours: [#n]pixel) (frame: [#h][#w]pixel): [h][w]pixel =
+  map (\row: [w]pixel -> map (selectColour colours) (map intensity row))
       frame
 
-entry warhol(frame : [#h][#w]pixel) : [h][w]pixel =
+entry warhol (frame: [#h][#w]pixel): [h][w]pixel =
   let frame' = quad frame
   let (urows,lrows) = split (h/2) frame'
   let (ul,ur) = split@1 (w/2) urows
