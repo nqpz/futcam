@@ -1,3 +1,4 @@
+import "futcamlib/base"
 import "futcamlib/color"
 import "futcamlib/selective_zoom"
 import "futcamlib/mystery"

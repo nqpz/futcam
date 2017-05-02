@@ -1,4 +1,4 @@
-import "futlib/math"
+import "/futlib/math"
 import "futcamlib/base"
 
 default (f32)
