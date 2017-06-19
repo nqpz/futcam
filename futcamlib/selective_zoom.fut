@@ -1,3 +1,4 @@
+import "/futlib/math"
 import "futcamlib/base"
 import "futcamlib/misc"
 import "futcamlib/color"

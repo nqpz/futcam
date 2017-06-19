@@ -149,7 +149,7 @@ class FutCam:
             cam_read_dur_ms = (time_end - time_start) * 1000
 
             # Mess with the internal representation.
-            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA)
+            frame = cv2.cvtColor(frame, cv2.COLOR_BGR2BGRA).view('uint32')
             frame = self.futhark.do_nothing(frame).get()
 
             # Scale if asked to.
