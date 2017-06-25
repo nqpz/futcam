@@ -161,9 +161,8 @@ let small_enough (threshold: u32) (a: u32) (b: u32): u32 =
 
 let nth_smallest (xs: [#n]u32, nth: i32): u32 =
   let smallest = reduce u32.min xs[0] xs
-  loop (smallest) = for _i < nth do
+  in loop (smallest) for _i < nth do
     reduce (small_enough smallest) smallest xs
-  in smallest
 
 let median (xs: [#n]u32): u32 = nth_smallest(xs, n / 2)
 
@@ -176,7 +175,7 @@ let safe (x: i32, m: i32): i32 =
 
 entry median_filter (frame: [#h][#w]pixel,
                      iterations: i32): [h][w]pixel =
-  loop (frame) = for _i < iterations do
+  let frame = loop (frame) for _i < iterations do
     map (\(y: i32): [w]pixel ->
            map (\(x: i32): pixel ->
                   let um = unsafe frame[safe(y - 1, h), x]
@@ -203,7 +202,7 @@ let pixel_average (pixels: [#n]u32): u32 =
 
 entry simple_blur (frame: [#h][#w]pixel,
                    iterations: i32): [h][w]pixel =
-  loop (frame) = for _i < iterations do
+  let frame = loop (frame) for _i < iterations do
     map (\(y: i32): [w]pixel ->
            map (\(x: i32): pixel ->
                   let um = unsafe frame[safe(y - 1, h), x]
