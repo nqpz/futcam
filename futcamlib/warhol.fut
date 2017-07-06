@@ -1,5 +1,5 @@
-import "futcamlib/misc"
-import "futcamlib/base"
+import "misc"
+import "base"
 default (f32)
 
 let intensity (p: pixel): i32 =

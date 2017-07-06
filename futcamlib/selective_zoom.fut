@@ -1,7 +1,7 @@
 import "/futlib/math"
-import "futcamlib/base"
-import "futcamlib/misc"
-import "futcamlib/color"
+import "base"
+import "misc"
+import "color"
 default (f32)
 
 type pixel_set_single = (i32, pixel)

@@ -1,5 +1,5 @@
 import "/futlib/math"
-import "futcamlib/base"
+import "base"
 default (f32)
 
 let toSq   (w: i32) (x: i32): f32 = 2.0*f32 x/f32 w - 1.0

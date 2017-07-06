@@ -1,6 +1,6 @@
 import "/futlib/math"
-import "futcamlib/base"
-import "futcamlib/color"
+import "base"
+import "color"
 default (f32)
 
 entry quad (frame: [#h][#w]pixel): [h][w]pixel =

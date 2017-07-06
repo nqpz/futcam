@@ -1,5 +1,5 @@
 import "/futlib/math"
-import "futcamlib/base"
+import "base"
 default (f32)
 
 let fmod (a: f32) (m: f32): f32 =

@@ -1,4 +1,4 @@
-import "futcamlib/base"
+import "base"
 
 let max32 (x: u32) (y: u32): u32 = if x < y then y else x
 

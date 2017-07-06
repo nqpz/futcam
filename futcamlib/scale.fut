@@ -1,5 +1,5 @@
-import "futcamlib/pixel_float"
-import "futcamlib/base"
+import "pixel_float"
+import "base"
 default (f32)
 
 entry scale_to (frame: [#h0][#w0]pixel,

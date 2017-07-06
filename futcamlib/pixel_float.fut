@@ -1,4 +1,4 @@
-import "futcamlib/base"
+import "base"
 default (f32)
 
 type pixel_float = (f32, f32, f32)
