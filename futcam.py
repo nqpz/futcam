@@ -117,6 +117,9 @@ class FutCam:
             ('blur low color',
              lambda frame, user_value:
              self.futhark.blur_low_color(frame, min(1.0, max(0.01, user_value * 0.1)))),
+            ('oil painting',
+             lambda frame, user_value:
+             self.futhark.oil_painting(frame, int(user_value))),
         ])
 
         return self.loop()

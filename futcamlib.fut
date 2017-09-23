@@ -8,6 +8,7 @@ import "futcamlib/whirl"
 import "futcamlib/greyscale"
 import "futcamlib/edgy"
 import "futcamlib/scale"
+import "futcamlib/oil_painting"
 default (f32)
 
 -- This shouldn't be necessary, but NumPy's reshape is stupid.
