@@ -3,7 +3,7 @@ import "base"
 
 default (f32)
 
-entry edgy (frame: [#h][#w]pixel,
+entry edgy [h][w] (frame: [h][w]pixel,
             distortion: f32): [h][w]pixel =
   map (\x: [w]pixel ->
        map (\y ->
