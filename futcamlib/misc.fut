@@ -66,9 +66,9 @@ entry dim_sides [h][w] (frame: [h][w]pixel,
                 let center_closeness = x_center_closeness * y_center_closeness
                 let center_closeness' = center_closeness ** strength
                 let (r, g, b) = get_rgb pixel
-                let r' = u32 (f32 r * center_closeness')
-                let g' = u32 (f32 g * center_closeness')
-                let b' = u32 (f32 b * center_closeness')
+                let r' = u32.f32 (f32.u32 r * center_closeness')
+                let g' = u32.f32 (f32.u32 g * center_closeness')
+                let b' = u32.f32 (f32.u32 b * center_closeness')
                 in set_rgb r' g' b')
          (zip row (iota w)))
   (zip frame (iota h))
@@ -198,7 +198,7 @@ let pixel_average [n] (pixels: [n]u32): u32 =
   let (r0, g0, b0) = reduce (\(a0, b0, c0) (a1, b1, c1) ->
                                (a0 + a1, b0 + b1, c0 + c1)) (0u32, 0u32, 0u32)
                             rgbs
-  in set_rgb (r0 / u32 n) (g0 / u32 n) (b0 / u32 n)
+  in set_rgb (r0 / u32.i32 n) (g0 / u32.i32 n) (b0 / u32.i32 n)
 
 entry simple_blur [h][w] (frame: [h][w]pixel,
                           iterations: i32): [h][w]pixel =

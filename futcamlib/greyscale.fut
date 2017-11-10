@@ -6,7 +6,7 @@ module W = import "warhol"
 default (f32)
 
 let desaturate (p: pixel): pixel =
-  let v = u32 (W.intensity p)
+  let v = u32.i32 (W.intensity p)
   in set_rgb v v v
 
 let rotation ((x,y): (i32, i32)): f32 =

@@ -7,7 +7,7 @@ let fmod (a: f32) (m: f32): f32 =
 
 let get_hsv (p: pixel): (f32, f32, f32) =
   let (r0, g0, b0) = get_rgb p
-  let (r, g, b) = (f32 r0 / 255.0, f32 g0 / 255.0, f32 b0 / 255.0)
+  let (r, g, b) = (f32.u32 r0 / 255.0, f32.u32 g0 / 255.0, f32.u32 b0 / 255.0)
   let mini = f32.min (f32.min r g) b
   let maxi = f32.max (f32.max r g) b
   let v = maxi
@@ -43,4 +43,4 @@ let hsv_to_rgb (h: f32, s: f32, v: f32): (u32, u32, u32) =
                      else (0.0, 0.0, 0.0)
   let m = v - c
   let (r, g, b) = (r0 + m, g0 + m, b0 + m)
-  in (u32 (255.0 * r), u32 (255.0 * g), u32 (255.0 * b))
+  in (u32.f32 (255.0 * r), u32.f32 (255.0 * g), u32.f32 (255.0 * b))

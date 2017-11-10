@@ -5,11 +5,11 @@ type pixel_float = (f32, f32, f32)
 
 let pixel_float (pixel: pixel): pixel_float =
   let (r, g, b) = get_rgb(pixel)
-  in (f32 r, f32 g, f32 b)
+  in (f32.u32 r, f32.u32 g, f32.u32 b)
 
 let pixel_unfloat (pixel: pixel_float): pixel =
   let (r, g, b) = pixel
-  in set_rgb (u32 r) (u32 g) (u32 b)
+  in set_rgb (u32.f32 r) (u32.f32 g) (u32.f32 b)
 
 let pixel_add (a: pixel_float, b: pixel_float): pixel_float =
   let (r_a, g_a, b_a) = a
