@@ -27,8 +27,8 @@ class FutCam:
 
         if self.resolution is not None:
             w, h = self.resolution
-            self.cam.set(cv2.CV_CAP_PROP_FRAME_WIDTH, w)
-            self.cam.set(cv2.CV_CAP_PROP_FRAME_HEIGHT, h)
+            self.cam.set(cv2.CAP_PROP_FRAME_WIDTH, w)
+            self.cam.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
 
         if self.scale_to is not None:
             self.width, self.height = self.scale_to
