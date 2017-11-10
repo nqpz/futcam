@@ -27,14 +27,14 @@ class FutCam:
 
         if self.resolution is not None:
             w, h = self.resolution
-            self.cam.set(cv2.cv.CV_CAP_PROP_FRAME_WIDTH, w)
-            self.cam.set(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT, h)
+            self.cam.set(cv2.CV_CAP_PROP_FRAME_WIDTH, w)
+            self.cam.set(cv2.CV_CAP_PROP_FRAME_HEIGHT, h)
 
         if self.scale_to is not None:
             self.width, self.height = self.scale_to
         else:
-            self.width = int(self.cam.get(cv2.cv.CV_CAP_PROP_FRAME_WIDTH))
-            self.height = int(self.cam.get(cv2.cv.CV_CAP_PROP_FRAME_HEIGHT))
+            self.width = int(self.cam.get(cv2.CAP_PROP_FRAME_WIDTH))
+            self.height = int(self.cam.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
         # Setup pygame.
         pygame.init()
