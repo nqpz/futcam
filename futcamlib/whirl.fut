@@ -2,8 +2,8 @@ import "/futlib/math"
 import "base"
 default (f32)
 
-let toSq   (w: i32) (x: i32): f32 = 2.0*f32 x/f32 w - 1.0
-let fromSq (w: i32) (x: f32): i32 = i32 ((x+1.0)*f32 w/2.0)
+let toSq   (w: i32) (x: i32): f32 = 2.0*r32 x/r32 w - 1.0
+let fromSq (w: i32) (x: f32): i32 = t32 ((x+1.0)*r32 w/2.0)
 let sqIndex [h][w] (frame: [h][w]pixel) ((x,y): (f32,f32)): pixel =
   let x' = fromSq h x
   let y' = fromSq w y

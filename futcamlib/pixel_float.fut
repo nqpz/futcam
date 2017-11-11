@@ -21,16 +21,16 @@ let pixel_mult_factor (p: pixel_float, f: f32): pixel_float =
   in (r * f, g * f, b * f)
 
 let pixel_at [h][w] (frame: [h][w]pixel, x: f32, y: f32): pixel_float =
-  let y_effect_b = y - f32 (i32 y)
+  let y_effect_b = y - r32 (t32 y)
   let y_effect_a = 1.0f32 - y_effect_b
-  let y_index_a = i32 y
+  let y_index_a = t32 y
   let y_index_b = if y_index_a == h - 1
                   then y_index_a
                   else y_index_a + 1
 
-  let x_effect_b = x - f32 (i32 x)
+  let x_effect_b = x - r32 (t32 x)
   let x_effect_a = 1.0f32 - x_effect_b
-  let x_index_a = i32 x
+  let x_index_a = t32 x
   let x_index_b = if x_index_a == w - 1
                   then x_index_a
                   else x_index_a + 1

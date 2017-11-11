@@ -3,7 +3,7 @@ import "base"
 default (f32)
 
 let fmod (a: f32) (m: f32): f32 =
-  a - f32 (i32 (a / m)) * m
+  a - r32 (t32 (a / m)) * m
 
 let get_hsv (p: pixel): (f32, f32, f32) =
   let (r0, g0, b0) = get_rgb p

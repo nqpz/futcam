@@ -30,7 +30,7 @@ entry balance_white [h][w] (frame: [h][w]pixel,
     (map (\(p: pixel): f32 ->
             let (_h, _s, v) = get_hsv p
             in v) pixels)
-  let value_current = value_total / f32 len
+  let value_current = value_total / r32 len
   let value_diff = value_target - value_current
   let pixels' = map (\(p: pixel): pixel ->
                      let (h, s, v) = get_hsv p
@@ -48,7 +48,7 @@ entry balance_saturation [h][w] (frame: [h][w]pixel,
     (map (\(p: pixel): f32 ->
             let (_h, s, _v) = get_hsv p
             in s) pixels)
-  let sat_current = sat_total / f32 len
+  let sat_current = sat_total / r32 len
   let sat_diff = sat_target - sat_current
   let pixels' = map (\(p: pixel): pixel ->
                      let (h, s, v) = get_hsv p
@@ -61,8 +61,8 @@ entry dim_sides [h][w] (frame: [h][w]pixel,
                         strength: f32): [h][w]pixel =
   map (\(row: [w]pixel, y: i32): [w]pixel ->
          map (\(pixel: pixel, x: i32): pixel ->
-                let x_center_closeness = 1.0f32 - f32 (i32.abs (w / 2 - x)) / (f32 (w / 2))
-                let y_center_closeness = 1.0f32 - f32 (i32.abs (h / 2 - y)) / (f32 (h / 2))
+                let x_center_closeness = 1.0f32 - r32 (i32.abs (w / 2 - x)) / (r32 (w / 2))
+                let y_center_closeness = 1.0f32 - r32 (i32.abs (h / 2 - y)) / (r32 (h / 2))
                 let center_closeness = x_center_closeness * y_center_closeness
                 let center_closeness' = center_closeness ** strength
                 let (r, g, b) = get_rgb pixel
@@ -130,9 +130,9 @@ entry merge_colors [h][w] (frame: [h][w]pixel,
   map (\(row: [w]pixel): [w]pixel ->
          map (\(p: pixel): pixel ->
                 let (h, s, v) = get_hsv p
-                let h' = f32 (i32 (h / group_size)) * group_size
-                let s' = (f32 (i32 ((s * 360.0) / group_size)) * group_size) / 360.0
-                let v' = (f32 (i32 ((v * 360.0) / group_size)) * group_size) / 360.0
+                let h' = r32 (t32 (h / group_size)) * group_size
+                let s' = (r32 (t32 ((s * 360.0) / group_size)) * group_size) / 360.0
+                let v' = (r32 (t32 ((v * 360.0) / group_size)) * group_size) / 360.0
                 let (r, g, b) = hsv_to_rgb (h', s', v')
                 in set_rgb r g b)
          row)
@@ -289,7 +289,7 @@ entry blur_low_color [h][w] (frame: [h][w]pixel,
 
 entry colored_boxes [h][w] (frame: [h][w]pixel,
                             distortion: f32): [h][w]pixel =
-  let rect_size = i32 distortion
+  let rect_size = t32 distortion
   let w_n = (w / rect_size + i32.sgn (w % rect_size)) in
   map (\(row: [w]pixel) (y: i32): [w]pixel ->
              map (\(p: pixel) (x: i32): pixel ->
@@ -297,15 +297,15 @@ entry colored_boxes [h][w] (frame: [h][w]pixel,
                         let y_n = y / rect_size
                         let t = y_n * w_n + x_n
                         let (h, s, v) = get_hsv p
-                        let h' = fmod (h + f32 t * 20.0) 360.0
+                        let h' = fmod (h + r32 t * 20.0) 360.0
                         let (s_min, s_max) = if s > 0.5
                                              then (1.0 - s, s)
                                              else (s, 1.0 - s)
                         let (v_min, v_max) = if v > 0.5
                                              then (1.0 - v, v)
                                              else (v, 1.0 - v)
-                        let s' = f32.min s_max (f32.max s_min (fmod (s + f32 t * 0.05) 1.0))
-                        let v' = f32.min v_max (f32.max v_min (fmod (v + f32 t * 0.05) 1.0))
+                        let s' = f32.min s_max (f32.max s_min (fmod (s + r32 t * 0.05) 1.0))
+                        let v' = f32.min v_max (f32.max v_min (fmod (v + r32 t * 0.05) 1.0))
                         let (r, g, b) = hsv_to_rgb (h', s', v')
                         in set_rgb r g b)
                      row (iota w))

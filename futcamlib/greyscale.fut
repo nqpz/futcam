@@ -10,9 +10,9 @@ let desaturate (p: pixel): pixel =
   in set_rgb v v v
 
 let rotation ((x,y): (i32, i32)): f32 =
-  let r = f32.sqrt (f32 (x*x + y*y))
-  let x' = f32 x / r
-  let y' = f32 y / r
+  let r = f32.sqrt (r32 (x*x + y*y))
+  let x' = r32 x / r
+  let y' = r32 y / r
   in f32.atan2 y' x'
 
 entry greyscale [h][w] (frame: [h][w]pixel, distortion: f32): [h][w]pixel =
