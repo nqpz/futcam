@@ -3,8 +3,7 @@ import "base"
 
 default (f32)
 
-entry edgy [h][w] (frame: [h][w]pixel,
-            distortion: f32): [h][w]pixel =
+let edgy [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   map (\x: [w]pixel ->
        map (\y ->
             if x >= w - 10

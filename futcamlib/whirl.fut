@@ -11,7 +11,7 @@ let sqIndex [h][w] (frame: [h][w]pixel) ((x,y): (f32,f32)): pixel =
      then unsafe frame[x', y']
      else RGB.black
 
-entry whirl [h][w] (frame: [h][w]pixel, distortion: f32): [h][w]pixel =
+let whirl [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   map (\x: [w]pixel ->
          map (\y: pixel ->
                 let r = f32.sqrt (x*x + y*y)

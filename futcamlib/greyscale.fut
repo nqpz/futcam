@@ -15,7 +15,7 @@ let rotation ((x,y): (i32, i32)): f32 =
   let y' = r32 y / r
   in f32.atan2 y' x'
 
-entry greyscale [h][w] (frame: [h][w]pixel, distortion: f32): [h][w]pixel =
+let greyscale [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   map (\x: [w]pixel ->
              map (\y ->
                     let p = frame[x, y]

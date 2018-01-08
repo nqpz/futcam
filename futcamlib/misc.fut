@@ -3,14 +3,14 @@ import "base"
 import "color"
 default (f32)
 
-entry quad [h][w] (frame: [h][w]pixel): [h][w]pixel =
+let quad [h][w] (frame: [h][w]pixel): [h][w]pixel =
   let n = 2
   in map (\y: [w]pixel ->
             map (\x: pixel -> unsafe frame[y%(h/n)*n,x%(w/n)*n])
                 (iota w))
          (iota h)
 
-entry invert_rgb [h][w] (frame: [h][w]pixel): [h][w]pixel =
+let invert_rgb [h][w] (frame: [h][w]pixel): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
          map (\(p: pixel): pixel ->
                 let (r, g, b) = get_rgb p
@@ -21,8 +21,7 @@ entry invert_rgb [h][w] (frame: [h][w]pixel): [h][w]pixel =
          row)
   frame
 
-entry balance_white [h][w] (frame: [h][w]pixel,
-                            value_target: f32): [h][w]pixel =
+let balance_white [h][w] (frame: [h][w]pixel) (value_target: f32): [h][w]pixel =
   let len = h * w
   let pixels = reshape (len) frame
   let value_total =
@@ -39,8 +38,7 @@ entry balance_white [h][w] (frame: [h][w]pixel,
   let frame' = reshape (h, w) pixels'
   in frame'
 
-entry balance_saturation [h][w] (frame: [h][w]pixel,
-                                 sat_target: f32): [h][w]pixel =
+let balance_saturation [h][w] (frame: [h][w]pixel) (sat_target: f32): [h][w]pixel =
   let len = h * w
   let pixels = reshape (len) frame
   let sat_total =
@@ -57,8 +55,7 @@ entry balance_saturation [h][w] (frame: [h][w]pixel,
   let frame' = reshape (h, w) pixels'
   in frame'
 
-entry dim_sides [h][w] (frame: [h][w]pixel,
-                        strength: f32): [h][w]pixel =
+let dim_sides [h][w] (frame: [h][w]pixel) (strength: f32): [h][w]pixel =
   map (\(row: [w]pixel, y: i32): [w]pixel ->
          map (\(pixel: pixel, x: i32): pixel ->
                 let x_center_closeness = 1.0f32 - r32 (i32.abs (w / 2 - x)) / (r32 (w / 2))
@@ -79,8 +76,7 @@ let closeness_hue (h0: f32) (h1: f32): f32 =
   let force = 3.3
   in linear ** force
 
-entry hue_focus [h][w] (frame: [h][w]pixel,
-                        hue_focus: f32): [h][w]pixel =
+let hue_focus [h][w] (frame: [h][w]pixel) (hue_focus: f32): [h][w]pixel =
   let hue_focus = fmod (fmod hue_focus 360.0 + 360.0) 360.0 in
   map (\(row: [w]pixel): [w]pixel ->
          map (\(p: pixel): pixel ->
@@ -97,8 +93,7 @@ entry hue_focus [h][w] (frame: [h][w]pixel,
 let closeness_value (v0: f32) (v1: f32): f32 =
   f32.abs (v1 - v0)
 
-entry value_focus [h][w] (frame: [h][w]pixel,
-                          value_focus: f32): [h][w]pixel =
+let value_focus [h][w] (frame: [h][w]pixel) (value_focus: f32): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
          map (\(p: pixel): pixel ->
                 let (_h, _s, v) = get_hsv p
@@ -111,8 +106,7 @@ entry value_focus [h][w] (frame: [h][w]pixel,
          row)
   frame
 
-entry saturation_focus [h][w] (frame: [h][w]pixel,
-                               value_focus: f32): [h][w]pixel =
+let saturation_focus [h][w] (frame: [h][w]pixel) (value_focus: f32): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
          map (\(p: pixel): pixel ->
                 let (_h, s, _v) = get_hsv p
@@ -125,8 +119,7 @@ entry saturation_focus [h][w] (frame: [h][w]pixel,
          row)
   frame
 
-entry merge_colors [h][w] (frame: [h][w]pixel,
-                           group_size: f32): [h][w]pixel =
+let merge_colors [h][w] (frame: [h][w]pixel) (group_size: f32): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
          map (\(p: pixel): pixel ->
                 let (h, s, v) = get_hsv p
@@ -138,7 +131,7 @@ entry merge_colors [h][w] (frame: [h][w]pixel,
          row)
   frame
 
-entry equalise_saturation [h][w] (frame: [h][w]pixel): [h][w]pixel =
+let equalise_saturation [h][w] (frame: [h][w]pixel): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
          map (\(p: pixel): pixel ->
                 let (h, _s, v) = get_hsv p
@@ -173,8 +166,7 @@ let safe (x: i32, m: i32): i32 =
   then m - 1
   else x
 
-entry median_filter [h][w] (frame: [h][w]pixel,
-                            iterations: i32): [h][w]pixel =
+let median_filter [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
     map (\(y: i32): [w]pixel ->
            map (\(x: i32): pixel ->
@@ -200,8 +192,7 @@ let pixel_average [n] (pixels: [n]u32): u32 =
                             rgbs
   in set_rgb (r0 / u32.i32 n) (g0 / u32.i32 n) (b0 / u32.i32 n)
 
-entry simple_blur [h][w] (frame: [h][w]pixel,
-                          iterations: i32): [h][w]pixel =
+let simple_blur [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
     map (\(y: i32): [w]pixel ->
            map (\(x: i32): pixel ->
@@ -231,7 +222,7 @@ let hsv_distance (p0: pixel) (p1: pixel): f32 =
   let v_diff = f32.abs (v1 - v0)
   in h_diff * s_diff * v_diff
 
-entry fake_heatmap [h][w] (frame: [h][w]pixel): [h][w]pixel =
+let fake_heatmap [h][w] (frame: [h][w]pixel): [h][w]pixel =
   map (\(y: i32): [w]pixel ->
          map (\(x: i32): pixel ->
                 let cm = unsafe frame[y, x]
@@ -274,8 +265,7 @@ let insane_blur [h][w] (insaneness: i32) (frame: [h][w]pixel) (xc: i32) (yc: i32
              xs))
     ys)
 
-entry blur_low_color [h][w] (frame: [h][w]pixel,
-                             threshold: f32): [h][w]pixel =
+let blur_low_color [h][w] (frame: [h][w]pixel) (threshold: f32): [h][w]pixel =
   map (\(y: i32): [w]pixel ->
          map (\(x: i32): pixel ->
                 let p = unsafe frame[y,x]
@@ -287,8 +277,7 @@ entry blur_low_color [h][w] (frame: [h][w]pixel,
          (iota w))
   (iota h)
 
-entry colored_boxes [h][w] (frame: [h][w]pixel,
-                            distortion: f32): [h][w]pixel =
+let colored_boxes [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   let rect_size = t32 distortion
   let w_n = (w / rect_size + i32.sgn (w % rect_size)) in
   map (\(row: [w]pixel) (y: i32): [w]pixel ->

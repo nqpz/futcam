@@ -2,8 +2,7 @@ import "pixel_float"
 import "base"
 default (f32)
 
-entry scale_to [h0][w0] (frame: [h0][w0]pixel,
-                         w1: i32, h1: i32): [h1][w1]pixel =
+let scale_to [h0][w0] (frame: [h0][w0]pixel) (w1: i32) (h1: i32): [h1][w1]pixel =
   let y_factor = r32 h1 / r32 h0
   let x_factor = r32 w1 / r32 w0
   in map (\(y1: i32): [w1]pixel ->

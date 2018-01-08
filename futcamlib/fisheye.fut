@@ -2,8 +2,7 @@ import "pixel_float"
 import "base"
 default (f32)
 
-entry fisheye [h][w] (frame: [h][w]pixel,
-                      distortion: f32): [h][w]pixel =
+let fisheye [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   map (\(y: i32): [w]pixel ->
          map (\(x: i32): pixel ->
                 let y_scale = ((r32 (h / 2)) ** distortion) / (r32 (h / 2))
