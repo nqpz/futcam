@@ -5,8 +5,7 @@ default (f32)
 
 let neighbors_relative (breadth: i32): [](i32, i32) =
   reshape ((breadth * 2 + 1) ** 2)
-  (map (\y -> map (\x -> (y, x))
-        [-breadth...breadth]) [-breadth...breadth])
+  (map (\y -> map (\x -> (y, x)) (-breadth...breadth)) (-breadth...breadth))
 
 let oil_painting [h][w] (frame: [h][w]pixel) (breadth: i32): [h][w]pixel =
   let ns = neighbors_relative breadth
@@ -25,5 +24,5 @@ let oil_painting [h][w] (frame: [h][w]pixel) (breadth: i32): [h][w]pixel =
 
   in map (\(y: i32): [w]pixel ->
        map (\(x: i32): pixel -> oil_painting_pixel_at y x)
-       [0..<w])
-  [0..<h]
+       (0..<w))
+  (0..<h)
