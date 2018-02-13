@@ -88,10 +88,3 @@ entry edgy [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
 
 entry oil_painting [h][w] (frame: [h][w]pixel) (breadth: i32): [h][w]pixel =
   effects.oil_painting frame breadth
-
-import "/futlib/colour"
-
--- | Must be called at the end to convert the frame into something
--- that can be displayed natively.
-entry finalise [h][w] (frame: [h][w]pixel): [w][h][3]u8 =
-  argb.to_screen (transpose frame)
