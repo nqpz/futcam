@@ -28,7 +28,7 @@ let selective_zoom_pixel (h : i32) (w : i32)
             let lower_lower = to_index h w (y' - 1) (x' - 1)
             let indices = [upper_upper, upper_lower, lower_upper, lower_lower]
             in zip indices (replicate 4 p)
-  else replicate 4 (-1, 0u32)
+  else replicate 4 (-1, 0)
 
 let hue_difference (h0 : f32) (h1 : f32) : f32 =
   let (h0, h1) = if h1 < h0 then (h1, h0) else (h0, h1)

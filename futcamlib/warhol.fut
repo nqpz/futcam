@@ -4,7 +4,7 @@ default (f32)
 
 let intensity (p: pixel): i32 =
   let (r, g, b) = get_rgb(p)
-  in (i32.u32 r * 2 + i32.u32 g * 3 + i32.u32 b) / 6
+  in (r * 2 + g * 3 + b) / 6
 
 let min (x: i32) (y: i32): i32 = if x < y then x else y
 

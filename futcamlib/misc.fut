@@ -14,9 +14,9 @@ let invert_rgb [h][w] (frame: [h][w]pixel): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
          map (\(p: pixel): pixel ->
                 let (r, g, b) = get_rgb p
-                let r' = 255u32 - r
-                let g' = 255u32 - g
-                let b' = 255u32 - b
+                let r' = 255 - r
+                let g' = 255 - g
+                let b' = 255 - b
                 in set_rgb r' g' b')
          row)
   frame
@@ -63,9 +63,9 @@ let dim_sides [h][w] (frame: [h][w]pixel) (strength: f32): [h][w]pixel =
                 let center_closeness = x_center_closeness * y_center_closeness
                 let center_closeness' = center_closeness ** strength
                 let (r, g, b) = get_rgb pixel
-                let r' = u32.f32 (f32.u32 r * center_closeness')
-                let g' = u32.f32 (f32.u32 g * center_closeness')
-                let b' = u32.f32 (f32.u32 b * center_closeness')
+                let r' = i32.f32 (f32.i32 r * center_closeness')
+                let g' = i32.f32 (f32.i32 g * center_closeness')
+                let b' = i32.f32 (f32.i32 b * center_closeness')
                 in set_rgb r' g' b')
          (zip row (iota w)))
   (zip frame (iota h))
@@ -143,7 +143,7 @@ let equalise_saturation [h][w] (frame: [h][w]pixel): [h][w]pixel =
          row)
   frame
 
-let small_enough (threshold: u32) (a: u32) (b: u32): u32 =
+let small_enough (threshold: i32) (a: i32) (b: i32): i32 =
   if a < b
   then if a <= threshold
        then b
@@ -152,12 +152,12 @@ let small_enough (threshold: u32) (a: u32) (b: u32): u32 =
   then a
   else b
 
-let nth_smallest [n] (xs: [n]u32, nth: i32): u32 =
-  let smallest = reduce u32.min xs[0] xs
+let nth_smallest [n] (xs: [n]i32, nth: i32): i32 =
+  let smallest = reduce i32.min xs[0] xs
   in loop (smallest) for _i < nth do
     reduce (small_enough smallest) smallest xs
 
-let median [n] (xs: [n]u32): u32 = nth_smallest(xs, n / 2)
+let median [n] (xs: [n]i32): i32 = nth_smallest(xs, n / 2)
 
 let safe (x: i32, m: i32): i32 =
   if x < 0
@@ -185,12 +185,12 @@ let median_filter [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
     (iota h)
   in frame
 
-let pixel_average [n] (pixels: [n]u32): u32 =
+let pixel_average [n] (pixels: [n]i32): i32 =
   let rgbs = map get_rgb pixels
   let (r0, g0, b0) = reduce (\(a0, b0, c0) (a1, b1, c1) ->
-                               (a0 + a1, b0 + b1, c0 + c1)) (0u32, 0u32, 0u32)
+                               (a0 + a1, b0 + b1, c0 + c1)) (0, 0, 0)
                             rgbs
-  in set_rgb (r0 / u32.i32 n) (g0 / u32.i32 n) (b0 / u32.i32 n)
+  in set_rgb (r0 / n) (g0 / n) (b0 / n)
 
 let simple_blur [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
