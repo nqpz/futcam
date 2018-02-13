@@ -8,7 +8,7 @@ let neighbors_relative (breadth: i32): [](i32, i32) =
   (map (\y -> map (\x -> (y, x)) (-breadth...breadth)) (-breadth...breadth))
 
 let oil_painting [h][w] (frame: [h][w]pixel) (breadth: i32): [h][w]pixel =
-  let ns = neighbors_relative breadth
+  let ns = neighbors_relative (i32.max 0 breadth)
   let oil_painting_pixel_at (y: i32) (x: i32): pixel =
     let ns' = map (\(yrel, xrel) -> (y + yrel, x + xrel)) ns
     let ps = map (\(y0, x0) ->
