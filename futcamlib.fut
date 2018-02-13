@@ -15,6 +15,7 @@ module effects = {
   open import "futcamlib/greyscale"
   open import "futcamlib/edgy"
   open import "futcamlib/oil_painting"
+  open import "futcamlib/highpass"
 }
 
 entry scale_to [h0][w0] (frame: [h0][w0]pixel) (w1: i32) (h1: i32): [h1][w1]pixel =
@@ -88,3 +89,6 @@ entry edgy [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
 
 entry oil_painting [h][w] (frame: [h][w]pixel) (breadth: i32): [h][w]pixel =
   effects.oil_painting frame breadth
+
+entry highpass [h][w] (frame: [h][w]pixel) (cutoff: i32): [h][w]pixel =
+  effects.highpass frame cutoff

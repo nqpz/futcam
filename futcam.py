@@ -121,6 +121,9 @@ class FutCam:
             ('oil painting',
              lambda frame, user_value:
              self.futhark.oil_painting(frame, int(user_value))),
+            ('highpass',
+             lambda frame, user_value:
+             self.futhark.highpass(frame, int(user_value))),
         ])
 
         return self.loop()
