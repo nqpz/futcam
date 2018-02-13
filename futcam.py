@@ -166,13 +166,13 @@ class FutCam:
                 frame = self.filters[filter_names[i]](frame, u)
 
             # Apply the currently selected filter.
-            frame = self.filters[filter_names[filter_index]](frame, user_value).get()
+            frame = self.filters[filter_names[filter_index]](frame, user_value)
+
+            # Satisfy the ghost of Steve Jobs.
+            frame = self.futhark.finalise(frame).get()
 
             time_end = time.time()
             futhark_dur_ms = (time_end - time_start) * 1000
-
-            # Mess with the internal representation.
-            frame = numpy.transpose(frame)
 
             # Show frame.
             pygame.surfarray.blit_array(self.screen, frame)
