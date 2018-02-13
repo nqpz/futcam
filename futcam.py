@@ -40,6 +40,7 @@ class FutCam:
         pygame.init()
         pygame.display.set_caption('futcam')
         self.screen = pygame.display.set_mode((self.width, self.height))
+        self.surface = pygame.Surface((self.width, self.height), depth=32)
         self.font = pygame.font.Font(None, 36)
         self.clock = pygame.time.Clock()
 
@@ -175,7 +176,8 @@ class FutCam:
             frame = numpy.transpose(frame)
 
             # Show frame.
-            pygame.surfarray.blit_array(self.screen, frame)
+            pygame.surfarray.blit_array(self.surface, frame)
+            self.screen.blit(self.surface, (0, 0))
 
             # Render HUD.
             if show_hud:
