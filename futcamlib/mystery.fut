@@ -17,5 +17,5 @@ let mystery [h][w] (frame: [h][w]pixel): [h][w]pixel =
          let rs' = map (beforeMax rms) (zip rs (iota w))
          let gs' = map (beforeMax gms) (zip gs (iota w))
          let bs' = map (beforeMax bms) (zip bs (iota w))
-         in map (\r g b -> set_rgb r g b) rs' gs' bs')
+         in map3 (\r g b -> set_rgb r g b) rs' gs' bs')
    frame

@@ -280,8 +280,8 @@ let blur_low_color [h][w] (frame: [h][w]pixel) (threshold: f32): [h][w]pixel =
 let colored_boxes [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   let rect_size = t32 distortion
   let w_n = (w / rect_size + i32.sgn (w % rect_size)) in
-  map (\(row: [w]pixel) (y: i32): [w]pixel ->
-             map (\(p: pixel) (x: i32): pixel ->
+  map2 (\(row: [w]pixel) (y: i32): [w]pixel ->
+             map2 (\(p: pixel) (x: i32): pixel ->
                         let x_n = x / rect_size
                         let y_n = y / rect_size
                         let t = y_n * w_n + x_n
