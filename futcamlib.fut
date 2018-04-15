@@ -18,77 +18,52 @@ module effects = {
   open import "futcamlib/highpass"
 }
 
-entry scale_to [h0][w0] (frame: [h0][w0]pixel) (w1: i32) (h1: i32): [h1][w1]pixel =
-  effects.scale_to frame w1 h1
+entry scale_to = effects.scale_to
 
-entry blur_low_color [h][w] (frame: [h][w]pixel) (threshold: f32): [h][w]pixel =
-  effects.blur_low_color frame threshold
+entry blur_low_color = effects.blur_low_color
 
-entry fake_heatmap [h][w] (frame: [h][w]pixel): [h][w]pixel =
-  effects.fake_heatmap frame
+entry fake_heatmap = effects.fake_heatmap
 
-entry simple_blur [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
-  effects.simple_blur frame iterations
+entry simple_blur = effects.simple_blur
 
-entry median_filter [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
-  effects.median_filter frame iterations
+entry median_filter = effects.median_filter
 
-entry equalise_saturation [h][w] (frame: [h][w]pixel): [h][w]pixel =
-  effects.equalise_saturation frame
+entry equalise_saturation = effects.equalise_saturation
 
-entry merge_colors [h][w] (frame: [h][w]pixel) (group_size: f32): [h][w]pixel =
-  effects.merge_colors frame group_size
+entry merge_colors = effects.merge_colors
 
-entry saturation_focus [h][w] (frame: [h][w]pixel) (value_focus: f32): [h][w]pixel =
-  effects.saturation_focus frame value_focus
+entry saturation_focus = effects.saturation_focus
 
-entry value_focus [h][w] (frame: [h][w]pixel) (value_focus: f32): [h][w]pixel =
-  effects.value_focus frame value_focus
+entry value_focus = effects.value_focus
 
-entry hue_focus [h][w] (frame: [h][w]pixel) (hue_focus: f32): [h][w]pixel =
-  effects.hue_focus frame hue_focus
+entry hue_focus = effects.hue_focus
 
-entry dim_sides [h][w] (frame: [h][w]pixel) (strength: f32): [h][w]pixel =
-  effects.dim_sides frame strength
+entry dim_sides = effects.dim_sides
 
-entry balance_saturation [h][w] (frame: [h][w]pixel) (sat_target: f32): [h][w]pixel =
-  effects.balance_saturation frame sat_target
+entry balance_saturation = effects.balance_saturation
 
-entry balance_white [h][w] (frame: [h][w]pixel) (value_target: f32): [h][w]pixel =
-  effects.balance_white frame value_target
+entry balance_white = effects.balance_white
 
-entry invert_rgb [h][w] (frame: [h][w]pixel): [h][w]pixel =
-  effects.invert_rgb frame
+entry invert_rgb = effects.invert_rgb
 
-entry quad [h][w] (frame: [h][w]pixel): [h][w]pixel =
-  effects.quad frame
+entry quad = effects.quad
 
-entry colored_boxes [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
-  effects.colored_boxes frame distortion
+entry colored_boxes = effects.colored_boxes
 
-entry selective_zoom [h][w] (frame: *[h][w]pixel) (threshold: f32): [h][w]pixel =
-  effects.selective_zoom frame threshold
+entry selective_zoom = effects.selective_zoom
 
-entry mystery [h][w] (frame: [h][w]pixel): [h][w]pixel =
-  effects.mystery frame
+entry mystery = effects.mystery
 
-entry fisheye [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
-  effects.fisheye frame distortion
+entry fisheye = effects.fisheye
 
-entry warhol [h][w] (frame: [h][w]pixel): [h][w]pixel =
-  effects.warhol frame
+entry warhol = effects.warhol
 
-entry whirl [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
-  effects.whirl frame distortion
+entry whirl = effects.whirl
 
-entry greyscale [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
-  effects.greyscale frame distortion
+entry greyscale = effects.greyscale
 
-entry edgy [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
-  effects.edgy frame distortion
+entry edgy = effects.edgy
 
-entry oil_painting [h][w] (frame: [h][w]pixel) (breadth: i32): [h][w]pixel =
-  effects.oil_painting frame breadth
+entry oil_painting = effects.oil_painting
 
-entry highpass [h][w] (frame: [h][w]pixel) (cutoff: i32): [h][w]pixel =
-  effects.highpass frame cutoff
+entry highpass = effects.highpass
