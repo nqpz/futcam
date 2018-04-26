@@ -1,5 +1,3 @@
-default (f32)
-
 type pixel = i32
 type channel = i32 -- This should only be 0..255, but i32 is fine.
 

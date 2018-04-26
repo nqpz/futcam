@@ -2,7 +2,6 @@ import "/futlib/math"
 import "base"
 import "misc"
 import "color"
-default (f32)
 
 type pixel_set_single = (i32, pixel)
 type pixel_set = [4]pixel_set_single

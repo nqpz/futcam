@@ -1,7 +1,6 @@
 import "/futlib/math"
 import "base"
 import "color"
-default (f32)
 
 let neighbors_relative (breadth: i32): [](i32, i32) =
   reshape ((breadth * 2 + 1) ** 2)

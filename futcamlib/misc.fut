@@ -1,7 +1,6 @@
 import "/futlib/math"
 import "base"
 import "color"
-default (f32)
 
 let quad [h][w] (frame: [h][w]pixel): [h][w]pixel =
   let n = 2

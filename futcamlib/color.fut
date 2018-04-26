@@ -1,6 +1,5 @@
 import "/futlib/math"
 import "base"
-default (f32)
 
 let fmod (a: f32) (m: f32): f32 =
   a - r32 (t32 (a / m)) * m

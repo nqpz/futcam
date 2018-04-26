@@ -1,6 +1,5 @@
 import "pixel_float"
 import "base"
-default (f32)
 
 let fisheye [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   map (\(y: i32): [w]pixel ->

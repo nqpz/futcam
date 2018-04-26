@@ -3,8 +3,6 @@ import "base"
 import "misc"
 module W = import "warhol"
 
-default (f32)
-
 let desaturate (p: pixel): pixel =
   let v = W.intensity p
   in set_rgb v v v

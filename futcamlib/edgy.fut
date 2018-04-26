@@ -1,8 +1,6 @@
 import "/futlib/math"
 import "base"
 
-default (f32)
-
 let edgy [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   map (\x: [w]pixel ->
        map (\y ->

@@ -1,6 +1,5 @@
 import "/futlib/math"
 import "base"
-default (f32)
 
 let toSq   (w: i32) (x: i32): f32 = 2.0*r32 x/r32 w - 1.0
 let fromSq (w: i32) (x: f32): i32 = t32 ((x+1.0)*r32 w/2.0)
