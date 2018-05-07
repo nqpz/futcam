@@ -35,7 +35,7 @@ let hue_difference (h0 : f32) (h1 : f32) : f32 =
 
 let selective_zoom [h][w] (frame : *[h][w]pixel) (threshold: f32) : [h][w]pixel =
   let n = h * w
-  let pixels = reshape (n) frame
+  let pixels = flatten frame
   let mask = map (\(p : pixel) : bool ->
                     let (_h, _s, v) = get_hsv p
                     -- let okay = hue_difference h (threshold * 10.0) < 50.0
@@ -44,7 +44,7 @@ let selective_zoom [h][w] (frame : *[h][w]pixel) (threshold: f32) : [h][w]pixel 
                     in okay)
                  pixels
   let pixel_sets = map3 (selective_zoom_pixel h w) (iota n) pixels mask
-  let (indices, pixel_writes) = unzip (reshape (n * 4) pixel_sets)
-  let pixels' = scatter pixels indices pixel_writes
-  let pixels'' = reshape (h, w) pixels'
+  let (indices, pixel_writes) = unzip (flatten pixel_sets)
+  let pixels' = scatter (copy pixels) indices pixel_writes
+  let pixels'' = unflatten h w pixels'
   in pixels''

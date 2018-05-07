@@ -22,7 +22,7 @@ let invert_rgb [h][w] (frame: [h][w]pixel): [h][w]pixel =
 
 let balance_white [h][w] (frame: [h][w]pixel) (value_target: f32): [h][w]pixel =
   let len = h * w
-  let pixels = reshape (len) frame
+  let pixels = flatten frame
   let value_total =
     reduce (+) 0.0
     (map (\(p: pixel): f32 ->
@@ -34,12 +34,12 @@ let balance_white [h][w] (frame: [h][w]pixel) (value_target: f32): [h][w]pixel =
                      let (h, s, v) = get_hsv p
                      let (r, g, b) = hsv_to_rgb (h, s, f32.min 1.0 (v + value_diff))
                      in set_rgb r g b) pixels
-  let frame' = reshape (h, w) pixels'
+  let frame' = unflatten h w pixels'
   in frame'
 
 let balance_saturation [h][w] (frame: [h][w]pixel) (sat_target: f32): [h][w]pixel =
   let len = h * w
-  let pixels = reshape (len) frame
+  let pixels = flatten frame
   let sat_total =
     reduce (+) 0.0
     (map (\(p: pixel): f32 ->
@@ -51,7 +51,7 @@ let balance_saturation [h][w] (frame: [h][w]pixel) (sat_target: f32): [h][w]pixe
                      let (h, s, v) = get_hsv p
                      let (r, g, b) = hsv_to_rgb (h, f32.max 0.0 (f32.min 1.0 (s + sat_diff)), v)
                      in set_rgb r g b) pixels
-  let frame' = reshape (h, w) pixels'
+  let frame' = unflatten h w pixels'
   in frame'
 
 let dim_sides [h][w] (frame: [h][w]pixel) (strength: f32): [h][w]pixel =

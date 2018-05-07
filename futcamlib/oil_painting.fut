@@ -3,7 +3,7 @@ import "base"
 import "color"
 
 let neighbors_relative (breadth: i32): [](i32, i32) =
-  reshape ((breadth * 2 + 1) ** 2)
+  flatten
   (map (\y -> map (\x -> (y, x)) (-breadth...breadth)) (-breadth...breadth))
 
 let oil_painting [h][w] (frame: [h][w]pixel) (breadth: i32): [h][w]pixel =
