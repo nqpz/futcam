@@ -30,6 +30,6 @@ let warhol [h][w] (frame: [h][w]pixel): [h][w]pixel =
   let ur' = warholColourise colours_ur ur
   let ll' = warholColourise colours_ll ll
   let lr' = warholColourise colours_lr lr
-  let lrows' = concat@1 ll' lr'
-  let urows' = concat@1 ul' ur'
+  let lrows' = map2 (++) ll' lr'
+  let urows' = map2 (++) ul' ur'
   in concat urows' lrows'
