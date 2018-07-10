@@ -10,7 +10,7 @@ let beforeMax ((max_v, max_i): (i32, i32)) ((v,i): (i32, i32)): i32 =
 
 let mystery [h][w] (frame: [h][w]pixel): [h][w]pixel =
   map (\row: [w]pixel ->
-         let (rs,gs,bs) = unzip (map get_rgb row)
+         let (rs,gs,bs) = unzip3 (map get_rgb row)
          let rms = reduce indexOfMax32 (0,0) (zip rs (iota w))
          let gms = reduce indexOfMax32 (0,0) (zip gs (iota w))
          let bms = reduce indexOfMax32 (0,0) (zip bs (iota w))
