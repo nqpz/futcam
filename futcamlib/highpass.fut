@@ -39,8 +39,8 @@ let pack_rgb ((r,g,b): (u8, u8, u8)): pixel =
   set_rgb (i32.u8 r) (i32.u8 g) (i32.u8 b)
 
 let highpass [n][m] (img: [n][m]pixel) (cutoff: i32): [n][m]pixel =
-  let (r, g, b) = unzip (map (\r -> map unpack_rgb r) img)
+  let (r, g, b) = unzip3 (map (\t -> unzip3 (map unpack_rgb t)) img)
   let r' = transform cutoff r
   let g' = transform cutoff g
   let b' = transform cutoff b
-  in map (\r -> map pack_rgb r) (zip@1 r' g' b')
+  in map3 (\r'' g'' b'' -> map pack_rgb (zip3 r'' g'' b'')) r' g' b'
