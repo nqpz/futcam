@@ -1,5 +1,6 @@
 *.pyc
 /futcamlib.py
+futcamlib/lib
 __pycache__
 .#*
 *#
