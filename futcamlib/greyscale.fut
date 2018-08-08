@@ -1,4 +1,3 @@
-import "/futlib/math"
 import "base"
 import "misc"
 module W = import "warhol"

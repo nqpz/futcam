@@ -1,4 +1,3 @@
-import "/futlib/math"
 import "base"
 
 let fmod (a: f32) (m: f32): f32 =

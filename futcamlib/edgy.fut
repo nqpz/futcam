@@ -1,4 +1,3 @@
-import "/futlib/math"
 import "base"
 
 let edgy [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
