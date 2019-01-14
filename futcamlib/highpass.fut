@@ -11,7 +11,7 @@ module fft = mk_fft f32
 
 let centre_2d [n][m] (arr: [n][m]c32): [n][m]c32 =
   let f (i: i32) (j: i32) (x: c32) =
-        c32.mk_re (f32.i32 ((-1) ** (i+j))) c32.* x
+    c32.mk_re (f32.i32 ((-1) ** (i+j))) c32.* x
   in map (\(i,r) -> map (\(j,x) -> f i j x) (zip (iota m) r)) (zip (iota n) arr)
 
 let transform [n][m] (cutoff: i32) (arr: [n][m]u8) =
@@ -21,9 +21,9 @@ let transform [n][m] (cutoff: i32) (arr: [n][m]u8) =
   let centre_i = n / 2
   let centre_j = m / 2
   let zap (i: i32) (j: i32) (x: c32) =
-        if i > centre_i - cutoff && i < centre_i + cutoff &&
-           j > centre_j - cutoff && j < centre_j + cutoff
-        then c32.mk_re 0f32 else x
+    if i > centre_i - cutoff && i < centre_i + cutoff &&
+       j > centre_j - cutoff && j < centre_j + cutoff
+    then c32.mk_re 0f32 else x
   let arr_filt = map (\(i,r) -> map (\(j,x) -> zap i j x) (zip (iota m) r))
                      (zip (iota n) arr_freq)
   let arr_inv = fft.ifft2 arr_filt

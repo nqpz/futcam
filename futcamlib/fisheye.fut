@@ -21,5 +21,5 @@ let fisheye [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
 
                 let pixel = pixel_unfloat (pixel_at (frame, x_back, y_back))
                 in pixel)
-         (iota w))
-  (iota h)
+             (iota w))
+      (iota h)

@@ -18,5 +18,5 @@ let scale_to [h0][w0] (frame: [h0][w0]pixel) (w1: i32) (h1: i32): [h1][w1]pixel 
 
                    let pixel = pixel_unfloat xy_val
                    in pixel)
-         (iota w1))
-  (iota h1)
+                (iota w1))
+         (iota h1)

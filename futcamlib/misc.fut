@@ -16,23 +16,23 @@ let invert_rgb [h][w] (frame: [h][w]pixel): [h][w]pixel =
                 let g' = 255 - g
                 let b' = 255 - b
                 in set_rgb r' g' b')
-         row)
-  frame
+             row)
+      frame
 
 let balance_white [h][w] (frame: [h][w]pixel) (value_target: f32): [h][w]pixel =
   let len = h * w
   let pixels = flatten frame
   let value_total =
     reduce (+) 0.0
-    (map (\(p: pixel): f32 ->
-            let (_h, _s, v) = get_hsv p
-            in v) pixels)
+           (map (\(p: pixel): f32 ->
+                   let (_h, _s, v) = get_hsv p
+                   in v) pixels)
   let value_current = value_total / r32 len
   let value_diff = value_target - value_current
   let pixels' = map (\(p: pixel): pixel ->
-                     let (h, s, v) = get_hsv p
-                     let (r, g, b) = hsv_to_rgb (h, s, f32.min 1.0 (v + value_diff))
-                     in set_rgb r g b) pixels
+                       let (h, s, v) = get_hsv p
+                       let (r, g, b) = hsv_to_rgb (h, s, f32.min 1.0 (v + value_diff))
+                       in set_rgb r g b) pixels
   let frame' = unflatten h w pixels'
   in frame'
 
@@ -41,15 +41,15 @@ let balance_saturation [h][w] (frame: [h][w]pixel) (sat_target: f32): [h][w]pixe
   let pixels = flatten frame
   let sat_total =
     reduce (+) 0.0
-    (map (\(p: pixel): f32 ->
-            let (_h, s, _v) = get_hsv p
-            in s) pixels)
+           (map (\(p: pixel): f32 ->
+                   let (_h, s, _v) = get_hsv p
+                   in s) pixels)
   let sat_current = sat_total / r32 len
   let sat_diff = sat_target - sat_current
   let pixels' = map (\(p: pixel): pixel ->
-                     let (h, s, v) = get_hsv p
-                     let (r, g, b) = hsv_to_rgb (h, f32.max 0.0 (f32.min 1.0 (s + sat_diff)), v)
-                     in set_rgb r g b) pixels
+                       let (h, s, v) = get_hsv p
+                       let (r, g, b) = hsv_to_rgb (h, f32.max 0.0 (f32.min 1.0 (s + sat_diff)), v)
+                       in set_rgb r g b) pixels
   let frame' = unflatten h w pixels'
   in frame'
 
@@ -65,8 +65,8 @@ let dim_sides [h][w] (frame: [h][w]pixel) (strength: f32): [h][w]pixel =
                 let g' = i32.f32 (f32.i32 g * center_closeness')
                 let b' = i32.f32 (f32.i32 b * center_closeness')
                 in set_rgb r' g' b')
-         (zip row (iota w)))
-  (zip frame (iota h))
+             (zip row (iota w)))
+      (zip frame (iota h))
 
 let closeness_hue (h0: f32) (h1: f32): f32 =
   let (h0, h1) = if h1 < h0 then (h1, h0) else (h0, h1)
@@ -85,8 +85,8 @@ let hue_focus [h][w] (frame: [h][w]pixel) (hue_focus: f32): [h][w]pixel =
                 let v' = c
                 let (r, g, b) = hsv_to_rgb (h', s', v')
                 in set_rgb r g b)
-         row)
-  frame
+             row)
+      frame
 
 let closeness_value (v0: f32) (v1: f32): f32 =
   f32.abs (v1 - v0)
@@ -101,8 +101,8 @@ let value_focus [h][w] (frame: [h][w]pixel) (value_focus: f32): [h][w]pixel =
                 let v' = c
                 let (r, g, b) = hsv_to_rgb (h', s', v')
                 in set_rgb r g b)
-         row)
-  frame
+             row)
+      frame
 
 let saturation_focus [h][w] (frame: [h][w]pixel) (value_focus: f32): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
@@ -114,8 +114,8 @@ let saturation_focus [h][w] (frame: [h][w]pixel) (value_focus: f32): [h][w]pixel
                 let v' = c
                 let (r, g, b) = hsv_to_rgb (h', s', v')
                 in set_rgb r g b)
-         row)
-  frame
+             row)
+      frame
 
 let merge_colors [h][w] (frame: [h][w]pixel) (group_size: f32): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
@@ -126,8 +126,8 @@ let merge_colors [h][w] (frame: [h][w]pixel) (group_size: f32): [h][w]pixel =
                 let v' = (r32 (t32 ((v * 360.0) / group_size)) * group_size) / 360.0
                 let (r, g, b) = hsv_to_rgb (h', s', v')
                 in set_rgb r g b)
-         row)
-  frame
+             row)
+      frame
 
 let equalise_saturation [h][w] (frame: [h][w]pixel): [h][w]pixel =
   map (\(row: [w]pixel): [w]pixel ->
@@ -138,8 +138,8 @@ let equalise_saturation [h][w] (frame: [h][w]pixel): [h][w]pixel =
                 let v' = v
                 let (r, g, b) = hsv_to_rgb (h', s', v')
                 in set_rgb r g b)
-         row)
-  frame
+             row)
+      frame
 
 let small_enough (threshold: i32) (a: i32) (b: i32): i32 =
   if a < b
@@ -153,7 +153,7 @@ let small_enough (threshold: i32) (a: i32) (b: i32): i32 =
 let nth_smallest [n] (xs: [n]i32, nth: i32): i32 =
   let smallest = reduce i32.min xs[0] xs
   in loop (smallest) for _i < nth do
-    reduce (small_enough smallest) smallest xs
+       reduce (small_enough smallest) smallest xs
 
 let median [n] (xs: [n]i32): i32 = nth_smallest(xs, n / 2)
 
@@ -166,21 +166,21 @@ let safe (x: i32, m: i32): i32 =
 
 let median_filter [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
-    map (\(y: i32): [w]pixel ->
-           map (\(x: i32): pixel ->
-                  let um = unsafe frame[safe(y - 1, h), x]
-                  let ur = unsafe frame[safe(y - 1, h), safe(x + 1, w)]
-                  let cr = unsafe frame[y,              safe(x + 1, w)]
-                  let lr = unsafe frame[safe(y + 1, h), safe(x + 1, w)]
-                  let lm = unsafe frame[safe(y + 1, h), x]
-                  let ll = unsafe frame[safe(y + 1, h), safe(x - 1, w)]
-                  let cl = unsafe frame[y,              safe(x - 1, w)]
-                  let ul = unsafe frame[safe(y - 1, h), safe(x - 1, w)]
-                  let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
-                  let p = median neighbors
-                  in p)
-           (iota w))
-    (iota h)
+                map (\(y: i32): [w]pixel ->
+                       map (\(x: i32): pixel ->
+                              let um = unsafe frame[safe(y - 1, h), x]
+                              let ur = unsafe frame[safe(y - 1, h), safe(x + 1, w)]
+                              let cr = unsafe frame[y,              safe(x + 1, w)]
+                              let lr = unsafe frame[safe(y + 1, h), safe(x + 1, w)]
+                              let lm = unsafe frame[safe(y + 1, h), x]
+                              let ll = unsafe frame[safe(y + 1, h), safe(x - 1, w)]
+                              let cl = unsafe frame[y,              safe(x - 1, w)]
+                              let ul = unsafe frame[safe(y - 1, h), safe(x - 1, w)]
+                              let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
+                              let p = median neighbors
+                              in p)
+                           (iota w))
+                    (iota h)
   in frame
 
 let pixel_average [n] (pixels: [n]i32): i32 =
@@ -192,21 +192,21 @@ let pixel_average [n] (pixels: [n]i32): i32 =
 
 let simple_blur [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
-    map (\(y: i32): [w]pixel ->
-           map (\(x: i32): pixel ->
-                  let um = unsafe frame[safe(y - 1, h), x]
-                  let ur = unsafe frame[safe(y - 1, h), safe(x + 1, w)]
-                  let cr = unsafe frame[y,              safe(x + 1, w)]
-                  let lr = unsafe frame[safe(y + 1, h), safe(x + 1, w)]
-                  let lm = unsafe frame[safe(y + 1, h), x]
-                  let ll = unsafe frame[safe(y + 1, h), safe(x - 1, w)]
-                  let cl = unsafe frame[y,              safe(x - 1, w)]
-                  let ul = unsafe frame[safe(y - 1, h), safe(x - 1, w)]
-                  let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
-                  let p = pixel_average neighbors
-                  in p)
-           (iota w))
-    (iota h)
+                map (\(y: i32): [w]pixel ->
+                       map (\(x: i32): pixel ->
+                              let um = unsafe frame[safe(y - 1, h), x]
+                              let ur = unsafe frame[safe(y - 1, h), safe(x + 1, w)]
+                              let cr = unsafe frame[y,              safe(x + 1, w)]
+                              let lr = unsafe frame[safe(y + 1, h), safe(x + 1, w)]
+                              let lm = unsafe frame[safe(y + 1, h), x]
+                              let ll = unsafe frame[safe(y + 1, h), safe(x - 1, w)]
+                              let cl = unsafe frame[y,              safe(x - 1, w)]
+                              let ul = unsafe frame[safe(y - 1, h), safe(x - 1, w)]
+                              let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
+                              let p = pixel_average neighbors
+                              in p)
+                           (iota w))
+                    (iota h)
   in frame
 
 let hsv_distance (p0: pixel) (p1: pixel): f32 =
@@ -247,8 +247,8 @@ let fake_heatmap [h][w] (frame: [h][w]pixel): [h][w]pixel =
                    v_in * factor_base + factor_rest)
                 let (r_out, g_out, b_out) = hsv_to_rgb (h_out, s_out, v_out)
                 in set_rgb r_out g_out b_out)
-         (iota w))
-  (iota h)
+             (iota w))
+      (iota h)
 
 let insane_blur [h][w] (insaneness: i32) (frame: [h][w]pixel) (xc: i32) (yc: i32): pixel =
   let half_insaneness = insaneness / 2
@@ -257,11 +257,11 @@ let insane_blur [h][w] (insaneness: i32) (frame: [h][w]pixel) (xc: i32) (yc: i32
   let xs = map (+ x_start) (iota insaneness)
   let ys = map (+ y_start) (iota insaneness)
   in pixel_average (
-    map (\y ->
-           pixel_average (map (\x ->
-                                 unsafe frame[safe(y, h), safe(x, w)])
-             xs))
-    ys)
+       map (\y ->
+              pixel_average (map (\x ->
+                                    unsafe frame[safe(y, h), safe(x, w)])
+                                 xs))
+           ys)
 
 let blur_low_color [h][w] (frame: [h][w]pixel) (threshold: f32): [h][w]pixel =
   map (\(y: i32): [w]pixel ->
@@ -272,23 +272,23 @@ let blur_low_color [h][w] (frame: [h][w]pixel) (threshold: f32): [h][w]pixel =
                          then insane_blur 40 frame x y
                          else p
                 in p')
-         (iota w))
-  (iota h)
+             (iota w))
+      (iota h)
 
 let colored_boxes [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   let rect_size = t32 distortion
   let w_n = (w / rect_size + i32.sgn (w % rect_size)) in
   map2 (\(row: [w]pixel) (y: i32): [w]pixel ->
-             map2 (\(p: pixel) (x: i32): pixel ->
-                        let x_n = x / rect_size
-                        let y_n = y / rect_size
-                        let t = y_n * w_n + x_n
-                        let (h, s, v) = get_hsv p
-                        let h' = fmod (h + r32 t * 20.0) 360.0
-                        let (s_min, s_max) = if s > 0.5
-                                             then (1.0 - s, s)
-                                             else (s, 1.0 - s)
-                        let (v_min, v_max) = if v > 0.5
+          map2 (\(p: pixel) (x: i32): pixel ->
+                  let x_n = x / rect_size
+                  let y_n = y / rect_size
+                  let t = y_n * w_n + x_n
+                  let (h, s, v) = get_hsv p
+                  let h' = fmod (h + r32 t * 20.0) 360.0
+                  let (s_min, s_max) = if s > 0.5
+                                       then (1.0 - s, s)
+                                       else (s, 1.0 - s)
+                  let (v_min, v_max) = if v > 0.5
                                              then (1.0 - v, v)
                                              else (v, 1.0 - v)
                         let s' = f32.min s_max (f32.max s_min (fmod (s + r32 t * 0.05) 1.0))
