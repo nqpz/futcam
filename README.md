@@ -11,7 +11,7 @@ https://github.com/HIPERFIT/futhark
 
 ## Dependencies
 
-`futcam.py` depends on PyGame, NumPy, and OpenCV 2.
+`futcam.py` depends on Python 3, PyGame, NumPy, and OpenCV 2.
 
 
 ## Keyboard controls
