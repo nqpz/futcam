@@ -18,7 +18,7 @@ let oil_painting [h][w] (frame: [h][w]pixel) (breadth: i32): [h][w]pixel =
                        if s0 > s1
                        then (p0, (h0, s0, v0))
                        else (p1, (h1, s1, v1)))
-                    (0, (0.0, 0.0, 0.0)) (zip ps hsvs)).1
+                    (0, (0.0, 0.0, 0.0)) (zip ps hsvs)).0
 
   in map (\(y: i32): [w]pixel ->
             map (\(x: i32): pixel -> oil_painting_pixel_at y x)
