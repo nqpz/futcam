@@ -15,6 +15,8 @@ let warholColourise [n][h][w] (colours: [n]pixel) (frame: [h][w]pixel): [h][w]pi
   map (\row: [w]pixel -> map (selectColour colours) (map intensity row))
       frame
 
+let concat_to 't (n: i32) (xs: []t) (ys: []t): *[]t = xs ++ ys :> [n]t
+
 let warhol [h][w] (frame: [h][w]pixel): [h][w]pixel =
   let frame' = quad frame
   let (urows,lrows) = split (h/2) frame'
@@ -30,6 +32,6 @@ let warhol [h][w] (frame: [h][w]pixel): [h][w]pixel =
   let ur' = warholColourise colours_ur ur
   let ll' = warholColourise colours_ll ll
   let lr' = warholColourise colours_lr lr
-  let lrows' = map2 (++) ll' lr'
-  let urows' = map2 (++) ul' ur'
-  in concat urows' lrows'
+  let lrows' = map2 (concat_to w) ll' lr'
+  let urows' = map2 (concat_to w) ul' ur'
+  in concat_to h urows' lrows'

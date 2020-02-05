@@ -34,7 +34,7 @@ let hue_difference (h0 : f32) (h1 : f32) : f32 =
 
 let selective_zoom [h][w] (frame : *[h][w]pixel) (threshold: f32) : [h][w]pixel =
   let n = h * w
-  let pixels = flatten frame
+  let pixels = flatten frame :> [n]pixel
   let mask = map (\(p : pixel) : bool ->
                     let (_h, _s, v) = get_hsv p
                     -- let okay = hue_difference h (threshold * 10.0) < 50.0
