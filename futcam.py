@@ -34,7 +34,7 @@ class FutCam:
         self.cam = cv2.VideoCapture(0)
 
         if not self.cam.isOpened():
-            print >> sys.stderr, 'error: could not open camera.'
+            print('error: could not open camera.', file=sys.stderr)
             return 1
 
         if self.resolution is not None:
