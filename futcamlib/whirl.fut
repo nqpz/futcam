@@ -6,7 +6,7 @@ let sqIndex [h][w] (frame: [h][w]pixel) ((x,y): (f32,f32)): pixel =
   let x' = fromSq h x
   let y' = fromSq w y
   in if x' >= 0 && x' < h && y' >= 0 && y' < w
-     then unsafe frame[x', y']
+     then frame[x', y']
      else RGB.black
 
 let whirl [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =

@@ -4,7 +4,7 @@ import "color"
 let quad [h][w] (frame: [h][w]pixel): [h][w]pixel =
   let n = 2
   in map (\y: [w]pixel ->
-            map (\x: pixel -> unsafe frame[y%(h/n)*n,x%(w/n)*n])
+            map (\x: pixel -> frame[y%(h/n)*n,x%(w/n)*n])
                 (iota w))
          (iota h)
 
@@ -168,14 +168,14 @@ let median_filter [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
                 map (\(y: i32): [w]pixel ->
                        map (\(x: i32): pixel ->
-                              let um = unsafe frame[safe(y - 1, h), x]
-                              let ur = unsafe frame[safe(y - 1, h), safe(x + 1, w)]
-                              let cr = unsafe frame[y,              safe(x + 1, w)]
-                              let lr = unsafe frame[safe(y + 1, h), safe(x + 1, w)]
-                              let lm = unsafe frame[safe(y + 1, h), x]
-                              let ll = unsafe frame[safe(y + 1, h), safe(x - 1, w)]
-                              let cl = unsafe frame[y,              safe(x - 1, w)]
-                              let ul = unsafe frame[safe(y - 1, h), safe(x - 1, w)]
+                              let um = frame[safe(y - 1, h), x]
+                              let ur = frame[safe(y - 1, h), safe(x + 1, w)]
+                              let cr = frame[y,              safe(x + 1, w)]
+                              let lr = frame[safe(y + 1, h), safe(x + 1, w)]
+                              let lm = frame[safe(y + 1, h), x]
+                              let ll = frame[safe(y + 1, h), safe(x - 1, w)]
+                              let cl = frame[y,              safe(x - 1, w)]
+                              let ul = frame[safe(y - 1, h), safe(x - 1, w)]
                               let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
                               let p = median neighbors
                               in p)
@@ -194,14 +194,14 @@ let simple_blur [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
                 map (\(y: i32): [w]pixel ->
                        map (\(x: i32): pixel ->
-                              let um = unsafe frame[safe(y - 1, h), x]
-                              let ur = unsafe frame[safe(y - 1, h), safe(x + 1, w)]
-                              let cr = unsafe frame[y,              safe(x + 1, w)]
-                              let lr = unsafe frame[safe(y + 1, h), safe(x + 1, w)]
-                              let lm = unsafe frame[safe(y + 1, h), x]
-                              let ll = unsafe frame[safe(y + 1, h), safe(x - 1, w)]
-                              let cl = unsafe frame[y,              safe(x - 1, w)]
-                              let ul = unsafe frame[safe(y - 1, h), safe(x - 1, w)]
+                              let um = frame[safe(y - 1, h), x]
+                              let ur = frame[safe(y - 1, h), safe(x + 1, w)]
+                              let cr = frame[y,              safe(x + 1, w)]
+                              let lr = frame[safe(y + 1, h), safe(x + 1, w)]
+                              let lm = frame[safe(y + 1, h), x]
+                              let ll = frame[safe(y + 1, h), safe(x - 1, w)]
+                              let cl = frame[y,              safe(x - 1, w)]
+                              let ul = frame[safe(y - 1, h), safe(x - 1, w)]
                               let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
                               let p = pixel_average neighbors
                               in p)
@@ -223,16 +223,16 @@ let hsv_distance (p0: pixel) (p1: pixel): f32 =
 let fake_heatmap [h][w] (frame: [h][w]pixel): [h][w]pixel =
   map (\(y: i32): [w]pixel ->
          map (\(x: i32): pixel ->
-                let cm = unsafe frame[y, x]
+                let cm = frame[y, x]
 
-                let um = unsafe frame[safe(y - 1, h), x]
-                let ur = unsafe frame[safe(y - 1, h), safe(x + 1, w)]
-                let cr = unsafe frame[y,              safe(x + 1, w)]
-                let lr = unsafe frame[safe(y + 1, h), safe(x + 1, w)]
-                let lm = unsafe frame[safe(y + 1, h), x]
-                let ll = unsafe frame[safe(y + 1, h), safe(x - 1, w)]
-                let cl = unsafe frame[y,              safe(x - 1, w)]
-                let ul = unsafe frame[safe(y - 1, h), safe(x - 1, w)]
+                let um = frame[safe(y - 1, h), x]
+                let ur = frame[safe(y - 1, h), safe(x + 1, w)]
+                let cr = frame[y,              safe(x + 1, w)]
+                let lr = frame[safe(y + 1, h), safe(x + 1, w)]
+                let lm = frame[safe(y + 1, h), x]
+                let ll = frame[safe(y + 1, h), safe(x - 1, w)]
+                let cl = frame[y,              safe(x - 1, w)]
+                let ul = frame[safe(y - 1, h), safe(x - 1, w)]
 
                 let neighbors = [um, ur, cr, lr, lm, ll, cl, ul]
                 let dist_total = reduce (+) 0.0 (map (hsv_distance cm) neighbors)
@@ -259,14 +259,14 @@ let insane_blur [h][w] (insaneness: i32) (frame: [h][w]pixel) (xc: i32) (yc: i32
   in pixel_average (
        map (\y ->
               pixel_average (map (\x ->
-                                    unsafe frame[safe(y, h), safe(x, w)])
+                                    frame[safe(y, h), safe(x, w)])
                                  xs))
            ys)
 
 let blur_low_color [h][w] (frame: [h][w]pixel) (threshold: f32): [h][w]pixel =
   map (\(y: i32): [w]pixel ->
          map (\(x: i32): pixel ->
-                let p = unsafe frame[y,x]
+                let p = frame[y,x]
                 let (_h, s, _v) = get_hsv p
                 let p' = if s < threshold
                          then insane_blur 40 frame x y

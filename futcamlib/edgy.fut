@@ -5,7 +5,7 @@ let edgy [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
          map (\y ->
                 if x >= w - 10
                 then RGB.black
-                else let (x1, x2) = (unsafe frame[x, y], unsafe frame[x + 10, y])
+                else let (x1, x2) = (frame[x, y], frame[x + 10, y])
                      let r_grad   = i32.abs (get_r(x1) - get_r(x2))
                      let g_grad   = i32.abs (get_g(x1) - get_g(x2))
                      let b_grad   = i32.abs (get_b(x1) - get_b(x2))
