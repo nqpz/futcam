@@ -2,16 +2,17 @@ import "base"
 import "misc"
 import "color"
 
-type pixel_set_single = (i32, pixel)
+type pixel_set_single = (i64, pixel)
 type pixel_set = [4]pixel_set_single
 
-let to_index (h : i32) (w : i32) (y : i32) (x : i32) : i32 =
+let to_index (h : i32) (w : i32) (y : i32) (x : i32) : i64 =
   if y < 0 || y >= h || x < 0 || x >= w
   then -1
-  else y * w + x
+  else i64.i32 (y * w + x)
 
 let selective_zoom_pixel (h : i32) (w : i32)
-  (index : i32) (p : pixel) (m : bool) : pixel_set =
+  (index : i64) (p : pixel) (m : bool) : pixel_set =
+  let index = i32.i64 index in
   if m then let y = index / w
             let x = index % w
             let y_norm = y - h / 2
@@ -42,7 +43,7 @@ let selective_zoom [h][w] (frame : *[h][w]pixel) (threshold: f32) : [h][w]pixel 
                     let okay = v > threshold / 10.0
                     in okay)
                  pixels
-  let pixel_sets = map3 (selective_zoom_pixel h w) (iota n) pixels mask
+  let pixel_sets = map3 (selective_zoom_pixel (i32.i64 h) (i32.i64 w)) (iota n) pixels mask
   let (indices, pixel_writes) = unzip (flatten pixel_sets)
   let pixels' = scatter (copy pixels) indices pixel_writes
   let pixels'' = unflatten h w pixels'

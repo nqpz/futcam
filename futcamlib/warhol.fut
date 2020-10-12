@@ -5,17 +5,16 @@ let intensity (p: pixel): i32 =
   let (r, g, b) = get_rgb(p)
   in (r * 2 + g * 3 + b) / 6
 
-let min (x: i32) (y: i32): i32 = if x < y then x else y
-
 let selectColour [n] (colours: [n]pixel) (x: i32): pixel =
+  let n = i32.i64 n
   let range = 256 / n
-  in colours[min (x/range) (n-1)]
+  in colours[i64.i32 (i32.min (x/range) (n-1))]
 
 let warholColourise [n][h][w] (colours: [n]pixel) (frame: [h][w]pixel): [h][w]pixel =
   map (\row: [w]pixel -> map (selectColour colours) (map intensity row))
       frame
 
-let concat_to 't (n: i32) (xs: []t) (ys: []t): *[]t = xs ++ ys :> [n]t
+let concat_to 't (n: i64) (xs: []t) (ys: []t): *[]t = xs ++ ys :> [n]t
 
 let warhol [h][w] (frame: [h][w]pixel): [h][w]pixel =
   let frame' = quad frame

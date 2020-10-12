@@ -16,8 +16,8 @@ let greyscale [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   map (\x: [w]pixel ->
          map (\y ->
                 let p = frame[x, y]
-                in if rotation (x-h/2, y-w/2) < distortion+3.147
+                in if rotation (x-i32.i64 h/2, y-i32.i64 w/2) < distortion+3.147
                    then desaturate p
                    else p)
-             (iota w))
-      (iota h)
+             (map i32.i64 (iota w)))
+      (map i32.i64 (iota h))

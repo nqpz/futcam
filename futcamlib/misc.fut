@@ -27,7 +27,7 @@ let balance_white [h][w] (frame: [h][w]pixel) (value_target: f32): [h][w]pixel =
            (map (\(p: pixel): f32 ->
                    let (_h, _s, v) = get_hsv p
                    in v) pixels)
-  let value_current = value_total / r32 len
+  let value_current = value_total / f32.i64 len
   let value_diff = value_target - value_current
   let pixels' = map (\(p: pixel): pixel ->
                        let (h, s, v) = get_hsv p
@@ -44,7 +44,7 @@ let balance_saturation [h][w] (frame: [h][w]pixel) (sat_target: f32): [h][w]pixe
            (map (\(p: pixel): f32 ->
                    let (_h, s, _v) = get_hsv p
                    in s) pixels)
-  let sat_current = sat_total / r32 len
+  let sat_current = sat_total / f32.i64 len
   let sat_diff = sat_target - sat_current
   let pixels' = map (\(p: pixel): pixel ->
                        let (h, s, v) = get_hsv p
@@ -54,10 +54,10 @@ let balance_saturation [h][w] (frame: [h][w]pixel) (sat_target: f32): [h][w]pixe
   in frame'
 
 let dim_sides [h][w] (frame: [h][w]pixel) (strength: f32): [h][w]pixel =
-  map (\(row: [w]pixel, y: i32): [w]pixel ->
-         map (\(pixel: pixel, x: i32): pixel ->
-                let x_center_closeness = 1.0f32 - r32 (i32.abs (w / 2 - x)) / (r32 (w / 2))
-                let y_center_closeness = 1.0f32 - r32 (i32.abs (h / 2 - y)) / (r32 (h / 2))
+  map (\(row: [w]pixel, y: i64): [w]pixel ->
+         map (\(pixel: pixel, x: i64): pixel ->
+                let x_center_closeness = 1.0f32 - r32 (i32.abs (i32.i64 w / 2 - i32.i64 x)) / (r32 (i32.i64 w / 2))
+                let y_center_closeness = 1.0f32 - r32 (i32.abs (i32.i64 h / 2 - i32.i64 y)) / (r32 (i32.i64 h / 2))
                 let center_closeness = x_center_closeness * y_center_closeness
                 let center_closeness' = center_closeness ** strength
                 let (r, g, b) = get_rgb pixel
@@ -155,9 +155,9 @@ let nth_smallest [n] (xs: [n]i32, nth: i32): i32 =
   in loop (smallest) for _i < nth do
        reduce (small_enough smallest) smallest xs
 
-let median [n] (xs: [n]i32): i32 = nth_smallest(xs, n / 2)
+let median [n] (xs: [n]i32): i32 = nth_smallest(xs, i32.i64 (n / 2))
 
-let safe (x: i32, m: i32): i32 =
+let safe (x: i64, m: i64): i64 =
   if x < 0
   then 0
   else if x > m - 1
@@ -166,8 +166,8 @@ let safe (x: i32, m: i32): i32 =
 
 let median_filter [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
-                map (\(y: i32): [w]pixel ->
-                       map (\(x: i32): pixel ->
+                map (\(y: i64): [w]pixel ->
+                       map (\(x: i64): pixel ->
                               let um = frame[safe(y - 1, h), x]
                               let ur = frame[safe(y - 1, h), safe(x + 1, w)]
                               let cr = frame[y,              safe(x + 1, w)]
@@ -188,12 +188,12 @@ let pixel_average [n] (pixels: [n]i32): i32 =
   let (r0, g0, b0) = reduce (\(a0, b0, c0) (a1, b1, c1) ->
                                (a0 + a1, b0 + b1, c0 + c1)) (0, 0, 0)
                             rgbs
-  in set_rgb (r0 / n) (g0 / n) (b0 / n)
+  in set_rgb (r0 / i32.i64 n) (g0 / i32.i64 n) (b0 / i32.i64 n)
 
 let simple_blur [h][w] (frame: [h][w]pixel) (iterations: i32): [h][w]pixel =
   let frame = loop (frame) for _i < iterations do
-                map (\(y: i32): [w]pixel ->
-                       map (\(x: i32): pixel ->
+                map (\(y: i64): [w]pixel ->
+                       map (\(x: i64): pixel ->
                               let um = frame[safe(y - 1, h), x]
                               let ur = frame[safe(y - 1, h), safe(x + 1, w)]
                               let cr = frame[y,              safe(x + 1, w)]
@@ -221,8 +221,8 @@ let hsv_distance (p0: pixel) (p1: pixel): f32 =
   in h_diff * s_diff * v_diff
 
 let fake_heatmap [h][w] (frame: [h][w]pixel): [h][w]pixel =
-  map (\(y: i32): [w]pixel ->
-         map (\(x: i32): pixel ->
+  map (\(y: i64): [w]pixel ->
+         map (\(x: i64): pixel ->
                 let cm = frame[y, x]
 
                 let um = frame[safe(y - 1, h), x]
@@ -254,22 +254,22 @@ let insane_blur [h][w] (insaneness: i32) (frame: [h][w]pixel) (xc: i32) (yc: i32
   let half_insaneness = insaneness / 2
   let x_start = xc - half_insaneness
   let y_start = yc - half_insaneness
-  let xs = map (+ x_start) (iota insaneness)
-  let ys = map (+ y_start) (iota insaneness)
+  let xs = map (\ins -> i32.i64 ins + x_start) (iota (i64.i32 insaneness))
+  let ys = map (\ins -> i32.i64 ins + y_start) (iota (i64.i32 insaneness))
   in pixel_average (
        map (\y ->
               pixel_average (map (\x ->
-                                    frame[safe(y, h), safe(x, w)])
+                                    frame[safe(i64.i32 y, h), safe(i64.i32 x, w)])
                                  xs))
            ys)
 
 let blur_low_color [h][w] (frame: [h][w]pixel) (threshold: f32): [h][w]pixel =
-  map (\(y: i32): [w]pixel ->
-         map (\(x: i32): pixel ->
+  map (\(y: i64): [w]pixel ->
+         map (\(x: i64): pixel ->
                 let p = frame[y,x]
                 let (_h, s, _v) = get_hsv p
                 let p' = if s < threshold
-                         then insane_blur 40 frame x y
+                         then insane_blur 40 frame (i32.i64 x) (i32.i64 y)
                          else p
                 in p')
              (iota w))
@@ -277,11 +277,11 @@ let blur_low_color [h][w] (frame: [h][w]pixel) (threshold: f32): [h][w]pixel =
 
 let colored_boxes [h][w] (frame: [h][w]pixel) (distortion: f32): [h][w]pixel =
   let rect_size = t32 distortion
-  let w_n = (w / rect_size + i32.sgn (w % rect_size)) in
-  map2 (\(row: [w]pixel) (y: i32): [w]pixel ->
-          map2 (\(p: pixel) (x: i32): pixel ->
-                  let x_n = x / rect_size
-                  let y_n = y / rect_size
+  let w_n = (i32.i64 w / rect_size + i32.sgn (i32.i64 w % rect_size)) in
+  map2 (\(row: [w]pixel) (y: i64): [w]pixel ->
+          map2 (\(p: pixel) (x: i64): pixel ->
+                  let x_n = i32.i64 x / rect_size
+                  let y_n = i32.i64 y / rect_size
                   let t = y_n * w_n + x_n
                   let (h, s, v) = get_hsv p
                   let h' = fmod (h + r32 t * 20.0) 360.0
