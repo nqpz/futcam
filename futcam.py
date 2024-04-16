@@ -5,9 +5,6 @@ import os.path
 import argparse
 import collections
 import time
-import tempfile
-import subprocess
-import importlib
 
 import pygame
 import numpy
