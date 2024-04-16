@@ -60,9 +60,6 @@ class FutCam:
         self.clock = pygame.time.Clock()
 
         # Filters.
-        self.jit_filter = None
-        self.jit_thread = None
-        self.jit_proc = None
         self.filters = collections.OrderedDict([
             ('nothing',
              ('do_nothing', 0,
@@ -143,62 +140,6 @@ class FutCam:
 
         return self.loop()
 
-    def jit_futhark(self, applied_filters, user_values):
-        try:
-            self.jit_proc.kill()
-        except Exception:
-            pass
-        if self.jit_thread is not None:
-            self.jit_thread.join()
-            self.jit_thread = None
-        self.jit_filter = None
-        self.jit_thread = spawn(self.jit_futhark_thread, applied_filters, user_values)
-
-    def jit_futhark_thread(self, applied_filters, user_values):
-        # We have N filters and N - 1 user values, as the final user value is
-        # adjustable interactively.
-
-        jit_file = tempfile.NamedTemporaryFile(suffix='.fut')
-        with open(jit_file.name, 'w') as f:
-            print('import "{}"'.format(
-                os.path.join(os.path.dirname(os.path.abspath(__file__)),
-                             'futcamlib')),
-                  file=f)
-            filter_names = list(self.filters.keys())
-            inp_args = ['v{}'.format(i)
-                        for i in range(self.filters[filter_names[applied_filters[-1]]][1])]
-            print('entry render frame {} ='.format(' '.join(inp_args)), file=f)
-
-            for i, u in zip(applied_filters, user_values + [None]):
-                func_name, func_args_num, func_args_func = self.filters[filter_names[i]]
-                if u is not None:
-                    func_args = [str(x) for x in func_args_func(u)]
-                else:
-                    func_args = inp_args
-                print('let frame = {} frame {} in'.format(
-                    func_name, ' '.join(func_args)), file=f)
-
-            print('frame', file=f)
-
-        # print(open(jit_file.name, 'r').read())
-
-        self.jit_proc = subprocess.Popen(['futhark', 'pyopencl', '--library',
-                                          jit_file.name])
-        try:
-            self.jit_proc.wait()
-        except Exception:
-            pass
-
-        try:
-            mod_name = os.path.basename(jit_file.name)[:-4]
-            sys.path.insert(0, os.path.dirname(jit_file.name))
-            jit_module = importlib.import_module(mod_name) # remove .fut
-            sys.path.pop(0)
-            self.jit_filter = eval('jit_module.{}'.format(mod_name))(
-                interactive=True).render
-        except Exception:
-            pass
-
     def message(self, what, where):
         text = self.font.render(what, 1, (255, 255, 255))
         self.screen.blit(text, where)
@@ -216,7 +157,6 @@ class FutCam:
         user_values = []
         user_value_change_speed = 13
 
-        self.jit_futhark([filter_index], [])
         while True:
             fps = self.clock.get_fps()
 
@@ -239,19 +179,13 @@ class FutCam:
 
             time_start = time.time()
 
-            # Apply the filter stack.
-            if self.jit_filter is not None:
-                render_method = 'JIT'
-                user_args = self.filters[filter_names[filter_index]][2](user_value)
-                frame = self.jit_filter(frame, *user_args).get()
-            else:
-                render_method = 'Interpret'
-                for i, u in zip(applied_filters + [filter_index],
-                                user_values + [user_value]):
-                    func_name, _func_args_num, func_args_func = self.filters[filter_names[i]]
-                    func_args = func_args_func(u)
-                    frame = eval('self.futhark.{}'.format(func_name))(frame, *func_args)
-                frame = frame.get()
+            render_method = 'Interpret'
+            for i, u in zip(applied_filters + [filter_index],
+                            user_values + [user_value]):
+                func_name, _func_args_num, func_args_func = self.filters[filter_names[i]]
+                func_args = func_args_func(u)
+                frame = eval('self.futhark.{}'.format(func_name))(frame, *func_args)
+            frame = frame.get()
 
             time_end = time.time()
             futhark_dur_ms = (time_end - time_start) * 1000
@@ -292,15 +226,12 @@ class FutCam:
 
                     elif event.key == pygame.K_UP:
                         filter_index = (filter_index - 1) % len(self.filters)
-                        self.jit_futhark(applied_filters + [filter_index], user_values)
                     elif event.key == pygame.K_DOWN:
                         filter_index = (filter_index + 1) % len(self.filters)
-                        self.jit_futhark(applied_filters + [filter_index], user_values)
 
                     elif event.key == pygame.K_RETURN:
                         applied_filters.append(filter_index)
                         user_values.append(user_value)
-                        self.jit_futhark(applied_filters + [filter_index], user_values)
                         user_value = 0
                     elif event.key == pygame.K_BACKSPACE:
                         if len(user_values) > 0:
@@ -308,7 +239,6 @@ class FutCam:
                             applied_filters = applied_filters[:-1]
                             user_value = user_values[-1]
                             user_values = user_values[:-1]
-                            self.jit_futhark(applied_filters + [filter_index], user_values)
                     elif event.key == pygame.K_LEFT:
                         user_value_status = -1
                     elif event.key == pygame.K_RIGHT:
