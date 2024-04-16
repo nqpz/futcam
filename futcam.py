@@ -7,7 +7,6 @@ import collections
 import time
 import tempfile
 import subprocess
-import threading
 import importlib
 
 import pygame
@@ -15,14 +14,6 @@ import numpy
 import cv2
 
 import futcamlib
-
-class Spawner(threading.Thread):
-    pass
-
-def spawn(f, *args):
-    s = Spawner(target=f, args=args)
-    s.start()
-    return s
 
 class FutCam:
     def __init__(self, resolution=None, scale_to=None):
