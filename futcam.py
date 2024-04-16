@@ -206,7 +206,7 @@ class FutCam:
                 self.message('Camera read: {:.2f} ms'.format(cam_read_dur_ms),
                              (self.width - 310, 5))
                 self.message('Futhark: {:.2f} ms'.format(futhark_dur_ms),
-                             (self.width - 250, 35))
+                             (self.width - 257, 35))
                 self.message('FPS: {:.2f}'.format(fps),
                              (self.width - 210, 65))
 
