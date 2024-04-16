@@ -60,6 +60,7 @@ class FutCam:
         self.clock = pygame.time.Clock()
 
         # Filters.
+        # FIXME: The commented-out filters have stopped working.
         self.filters = collections.OrderedDict([
             ('nothing',
              ('do_nothing', 0,
@@ -82,9 +83,9 @@ class FutCam:
             ('quad',
              ('quad', 0,
               lambda _: [])),
-            ('edgy',
-             ('edgy', 1,
-              lambda user_value: [max(1, user_value + 1)])),
+            # ('edgy',
+            #  ('edgy', 1,
+            #   lambda user_value: [max(1, user_value + 1)])),
             ('greyscale',
              ('greyscale', 1,
               lambda user_value: [user_value * 0.1])),
@@ -118,9 +119,9 @@ class FutCam:
             ('median filter',
              ('median_filter', 1,
               lambda user_value: [int(user_value)])),
-            ('a mystery',
-             ('mystery', 0,
-              lambda _: [])),
+            # ('a mystery',
+            #  ('mystery', 0,
+            #   lambda _: [])),
             ('simple blur',
              ('simple_blur', 1,
               lambda user_value: [int(user_value)])),
@@ -133,9 +134,9 @@ class FutCam:
             ('oil painting',
              ('oil_painting', 1,
               lambda user_value: [int(user_value)])),
-            ('highpass',
-             ('highpass', 1,
-              lambda user_value: [int(user_value)])),
+            # ('highpass',
+            #  ('highpass', 1,
+            #   lambda user_value: [int(user_value)])),
         ])
 
         return self.loop()
