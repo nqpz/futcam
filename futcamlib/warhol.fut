@@ -18,7 +18,7 @@ let concat_to 't (n: i64) (xs: []t) (ys: []t): *[]t = xs ++ ys :> [n]t
 
 let warhol [h][w] (frame: [h][w]pixel): [h][w]pixel =
   let frame' = quad frame
-  let (urows,lrows) = split (h/2) frame'
+  let (urows,lrows) = split (frame' :> [(h/2) + (h-(h/2))][w]pixel)
   let ul = urows[:,:w/2]
   let ur = urows[:,w/2:]
   let ll = lrows[:,:w/2]

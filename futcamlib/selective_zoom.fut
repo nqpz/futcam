@@ -45,6 +45,5 @@ let selective_zoom [h][w] (frame : *[h][w]pixel) (threshold: f32) : [h][w]pixel 
                  pixels
   let pixel_sets = map3 (selective_zoom_pixel (i32.i64 h) (i32.i64 w)) (iota n) pixels mask
   let (indices, pixel_writes) = unzip (flatten pixel_sets)
-  let pixels' = scatter (copy pixels) indices pixel_writes
-  let pixels'' = unflatten h w pixels'
-  in pixels''
+  let pixels' = scatter (copy pixels) indices pixel_writes :> [h * w]pixel
+  in unflatten pixels'
