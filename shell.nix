@@ -8,6 +8,6 @@ mkShell {
     opencl-headers
     SDL2
     SDL2_ttf
-    (python3.withPackages (ppkgs: with ppkgs; [ setuptools numpy pygame pyopencl opencv4 ]))
+    (python3.withPackages (ppkgs: with ppkgs; [ numpy pygame pyopencl opencv4 ]))
   ];
 }
