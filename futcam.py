@@ -180,7 +180,6 @@ class FutCam:
 
             time_start = time.time()
 
-            render_method = 'Interpret'
             for i, u in zip(applied_filters + [filter_index],
                             user_values + [user_value]):
                 func_name, _func_args_num, func_args_func = self.filters[filter_names[i]]
@@ -210,8 +209,6 @@ class FutCam:
                              (self.width - 250, 35))
                 self.message('FPS: {:.2f}'.format(fps),
                              (self.width - 210, 65))
-                self.message('Stack: {}'.format(render_method),
-                             (self.width - 210, 95))
 
             # Show on screen.
             pygame.display.flip()
